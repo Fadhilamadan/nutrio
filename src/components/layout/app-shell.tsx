@@ -123,7 +123,7 @@ export function AppShell() {
       if (!historyQuery.trim()) {
         prependHistoryMeal(savedMeal);
       }
-      setScreen("dashboard");
+      setScreen("history");
     } catch (error) {
       console.error("Failed to save meal:", error);
     }

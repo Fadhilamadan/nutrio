@@ -22,7 +22,7 @@ type SettingsFormProps = {
 
 const providerTips: Record<AiProviderName, string> = {
   Gemini: "Gemini 2.5 Flash: 1,500 req/day free, no credit card required.",
-  Groq: "Groq: 14,400 req/day free tier. Llama 4 / Pixtral vision models.",
+  Groq: "Groq: 14,400 req/day free tier. Vision models: meta-llama/llama-4-scout-17b-16e-instruct.",
   OpenRouter: "Access many free models via openrouter/free. Single API key for multiple providers.",
   HuggingFace: "Free Inference API, rate-limited, no credit card required.",
   Mistral: "Pixtral vision model. 1B tokens/month free, 5 RPM rate limit.",
@@ -88,6 +88,9 @@ export function SettingsForm({
           value={draftSettings.aiModel}
           onChange={(event) => setDraftSettings((current) => ({ ...current, aiModel: event.target.value }))}
         />
+        {draftSettings.aiProvider === "Groq" ? (
+          <p className="text-xs text-[var(--ink-muted)]">Recommended: meta-llama/llama-4-scout-17b-16e-instruct</p>
+        ) : null}
       </div>
       <div className="space-y-2">
         <Label htmlFor="key">API Key</Label>

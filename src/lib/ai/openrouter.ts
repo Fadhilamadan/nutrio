@@ -27,7 +27,6 @@ export class OpenRouterService implements ProviderService {
             ],
           },
         ],
-        response_format: { type: "json_object" },
       }),
     });
 

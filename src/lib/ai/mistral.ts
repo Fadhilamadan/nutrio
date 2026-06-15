@@ -32,7 +32,6 @@ export class MistralService implements ProviderService {
         ],
         temperature: AI_ANALYSIS_TEMPERATURE,
         max_tokens: AI_MAX_OUTPUT_TOKENS,
-        response_format: { type: "json_object" },
       }),
     });
 
