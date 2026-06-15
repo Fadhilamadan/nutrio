@@ -30,7 +30,7 @@ const providerTips: Record<AiProviderName, string> = {
 };
 
 function CollapsibleGroup({
-  id,
+  id: _id,
   title,
   icon,
   isOpen,
@@ -85,7 +85,8 @@ export function SettingsForm({
   const [isSaving, setIsSaving] = useState(false);
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["ai", "appearance", "notifications", "app"]));
   const notificationPermission = typeof Notification === "undefined" ? "unsupported" : Notification.permission;
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isIOS =
+    /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   const isStandalone = "standalone" in navigator && navigator.standalone;
   const pwaInstalled = settings.pwaInstalled || (isIOS && isStandalone);
 
@@ -139,8 +140,8 @@ export function SettingsForm({
           ) : null}
         </div>
         <p className="mt-2 text-sm leading-6 text-[var(--ink-muted)]">
-          Configure your AI provider, theme, notifications, and app preferences. Your API key stays in your browser
-          — we never upload it.
+          Configure your AI provider, theme, notifications, and app preferences. Your API key stays in your browser — we
+          never upload it.
         </p>
       </div>
 
@@ -274,9 +275,7 @@ export function SettingsForm({
           {isIOS ? (
             <div className="flex items-center justify-between gap-4">
               <p className="text-sm text-[var(--ink-muted)]">
-                {pwaInstalled
-                  ? "Installed from Home Screen"
-                  : "Open in Safari → Share → Add to Home Screen"}
+                {pwaInstalled ? "Installed from Home Screen" : "Open in Safari → Share → Add to Home Screen"}
               </p>
               {pwaInstalled ? <CheckCircle className="size-5 shrink-0 text-[var(--success)]" /> : null}
             </div>
@@ -293,7 +292,12 @@ export function SettingsForm({
       </div>
 
       {saveError ? <p className="text-sm text-[var(--danger)]">{saveError}</p> : null}
-      <Button type="button" className="w-full active:scale-[0.98] transition-transform duration-75" onClick={saveSettings} disabled={isSaving}>
+      <Button
+        type="button"
+        className="w-full active:scale-[0.98] transition-transform duration-75"
+        onClick={saveSettings}
+        disabled={isSaving}
+      >
         {isSaving ? "Saving settings" : "Save settings"}
       </Button>
     </form>

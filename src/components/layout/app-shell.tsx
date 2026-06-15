@@ -74,8 +74,16 @@ export function AppShell() {
     removeHistoryMeal,
   } = useHistoryMeals(activeUser);
   const { targets, targetsError, saveTargets } = useTargets(activeUser);
-  const { settings, settingsError, isLoadingSettings, installPrompt, defaultModels, saveSettings, installPwa, requestNotifications } =
-    useSettings(activeUser);
+  const {
+    settings,
+    settingsError,
+    isLoadingSettings,
+    installPrompt,
+    defaultModels,
+    saveSettings,
+    installPwa,
+    requestNotifications,
+  } = useSettings(activeUser);
 
   const [screen, setScreen] = useState<Screen>("dashboard");
 
