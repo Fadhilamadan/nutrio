@@ -3,10 +3,12 @@
 import { motion } from "framer-motion";
 
 import { SettingsForm } from "@/features/settings/components/settings-form";
+import type { AiProviderName } from "@/lib/ai";
 import type { Settings } from "@/lib/types";
 
 type SettingsScreenProps = {
   settings: Settings;
+  defaultModels: Record<AiProviderName, string> | null;
   canInstallPwa: boolean;
   onInstallPwa: () => void;
   onRequestNotifications: () => void;
@@ -15,6 +17,7 @@ type SettingsScreenProps = {
 
 export function SettingsScreen({
   settings,
+  defaultModels,
   canInstallPwa,
   onInstallPwa,
   onRequestNotifications,
@@ -29,16 +32,10 @@ export function SettingsScreen({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -18 }}
     >
-      <div className="surface-card rounded-xl p-5">
-        <h2 className="text-xl font-bold tracking-[-0.025em] text-[var(--ink)]">AI, PWA, and privacy</h2>
-        <p className="mt-2 text-sm leading-6 text-[var(--ink-muted)]">
-          API keys stay in this browser, while Notion stores only settings metadata. Select your preferred AI provider
-          below.
-        </p>
-      </div>
       <SettingsForm
         key={formKey}
         settings={settings}
+        defaultModels={defaultModels}
         canInstallPwa={canInstallPwa}
         onInstallPwa={onInstallPwa}
         onRequestNotifications={onRequestNotifications}

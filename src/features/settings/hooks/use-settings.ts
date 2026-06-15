@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import type { AiProviderName } from "@/lib/ai";
-import { getSettings, saveSettings as saveSettingsApi } from "@/lib/api";
+import { getDefaultModels, getSettings, saveSettings as saveSettingsApi } from "@/lib/api";
 import type { Settings, User } from "@/lib/types";
 
 type BeforeInstallPromptEvent = Event & {
@@ -20,6 +20,7 @@ export function useSettings(activeUser: User | null) {
   const [settingsError, setSettingsError] = useState("");
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [defaultModels, setDefaultModels] = useState<Record<AiProviderName, string> | null>(null);
 
   useEffect(() => {
     if (!activeUser) return;
@@ -44,6 +45,12 @@ export function useSettings(activeUser: User | null) {
       .finally(() => {
         if (active) setIsLoadingSettings(false);
       });
+
+    getDefaultModels()
+      .then((models) => {
+        if (active) setDefaultModels(models);
+      })
+      .catch(() => {});
 
     return () => {
       active = false;
@@ -102,6 +109,7 @@ export function useSettings(activeUser: User | null) {
     settingsError,
     isLoadingSettings,
     installPrompt,
+    defaultModels,
     saveSettings,
     installPwa,
     requestNotifications,
