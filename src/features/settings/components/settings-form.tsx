@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, ChevronDown, Palette, Smartphone, Sparkles } from "lucide-react";
+import { Bell, CheckCircle, ChevronDown, Palette, Smartphone, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -85,6 +85,9 @@ export function SettingsForm({
   const [isSaving, setIsSaving] = useState(false);
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["ai", "appearance", "notifications", "app"]));
   const notificationPermission = typeof Notification === "undefined" ? "unsupported" : Notification.permission;
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isStandalone = "standalone" in navigator && navigator.standalone;
+  const pwaInstalled = settings.pwaInstalled || (isIOS && isStandalone);
 
   const isDirty =
     draftSettings.aiProvider !== settings.aiProvider ||
@@ -242,16 +245,22 @@ export function SettingsForm({
                 onCheckedChange={(checked) => setDraftSettings((current) => ({ ...current, notifications: checked }))}
               />
             </div>
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={onRequestNotifications}
-              disabled={notificationPermission === "unsupported"}
-            >
-              <Bell className="size-4" />
-              Permission: {notificationPermission}
-            </Button>
+            {isIOS ? (
+              <p className="text-xs text-[var(--ink-muted)]">
+                Not supported on iOS. Enable on Android or desktop for daily reminders.
+              </p>
+            ) : (
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={onRequestNotifications}
+                disabled={notificationPermission === "unsupported"}
+              >
+                <Bell className="size-4" />
+                Permission: {notificationPermission}
+              </Button>
+            )}
           </div>
         </CollapsibleGroup>
 
@@ -262,13 +271,24 @@ export function SettingsForm({
           isOpen={openGroups.has("app")}
           onToggle={() => toggleGroup("app")}
         >
-          <div className="flex items-center justify-between gap-4">
-            <p className="text-sm text-[var(--ink-muted)]">Install Nutrio as an app for quick access</p>
-            <Button type="button" variant="secondary" size="sm" onClick={onInstallPwa} disabled={!canInstallPwa}>
-              {settings.pwaInstalled ? "Installed" : "Install"}
-              <Smartphone className="size-4" />
-            </Button>
-          </div>
+          {isIOS ? (
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-sm text-[var(--ink-muted)]">
+                {pwaInstalled
+                  ? "Installed from Home Screen"
+                  : "Open in Safari → Share → Add to Home Screen"}
+              </p>
+              {pwaInstalled ? <CheckCircle className="size-5 shrink-0 text-[var(--success)]" /> : null}
+            </div>
+          ) : (
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-sm text-[var(--ink-muted)]">Install Nutrio as an app for quick access</p>
+              <Button type="button" variant="secondary" size="sm" onClick={onInstallPwa} disabled={!canInstallPwa}>
+                {settings.pwaInstalled ? "Installed" : "Install"}
+                <Smartphone className="size-4" />
+              </Button>
+            </div>
+          )}
         </CollapsibleGroup>
       </div>
 
