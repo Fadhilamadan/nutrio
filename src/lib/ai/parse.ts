@@ -6,11 +6,19 @@ function numberValue(value: unknown) {
 }
 
 export function parseAnalysis(content: string, providerName: string): AnalysisResult {
-  const cleaned = content.replace(/```(?:json)?\s*\n?/gi, "").replace(/\s*```/g, "");
-  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error(`${providerName} did not return JSON nutrition data.`);
+  const cleaned = content
+    .replace(/```(?:json)?\s*\n?/gi, "")
+    .replace(/\s*```/g, "")
+    .trim();
 
-  const rawResponse = JSON.parse(jsonMatch[0]) as Record<string, unknown>;
+  let rawResponse: Record<string, unknown>;
+  try {
+    rawResponse = JSON.parse(cleaned) as Record<string, unknown>;
+  } catch {
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error(`${providerName} did not return JSON nutrition data.`);
+    rawResponse = JSON.parse(jsonMatch[0]) as Record<string, unknown>;
+  }
   const items = Array.isArray(rawResponse.items)
     ? rawResponse.items
         .map((item) =>

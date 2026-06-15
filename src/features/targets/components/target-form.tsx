@@ -107,13 +107,13 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
     });
   }
 
-  const isDirty = targets !== null && (
-    draftTargets.calories !== targets.calories ||
-    draftTargets.protein !== targets.protein ||
-    draftTargets.carbs !== targets.carbs ||
-    draftTargets.fat !== targets.fat ||
-    draftTargets.reminderTime !== targets.reminderTime
-  );
+  const isDirty =
+    targets !== null &&
+    (draftTargets.calories !== targets.calories ||
+      draftTargets.protein !== targets.protein ||
+      draftTargets.carbs !== targets.carbs ||
+      draftTargets.fat !== targets.fat ||
+      draftTargets.reminderTime !== targets.reminderTime);
 
   return (
     <form className="space-y-5">
@@ -240,7 +240,9 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
               </span>
             ) : null}
           </div>
-          <p className="mt-1 text-sm text-[var(--ink-muted)]">These are your daily nutrition targets. Adjust any value and save.</p>
+          <p className="mt-1 text-sm text-[var(--ink-muted)]">
+            These are your daily nutrition targets. Adjust any value and save.
+          </p>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">

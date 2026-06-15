@@ -34,6 +34,7 @@ export class GeminiService implements ProviderService {
           generationConfig: {
             temperature: AI_ANALYSIS_TEMPERATURE,
             maxOutputTokens: AI_MAX_OUTPUT_TOKENS,
+            responseMimeType: "application/json",
           },
         }),
       },

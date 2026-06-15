@@ -1,2 +1,2 @@
-export const AI_ANALYSIS_TEMPERATURE = 0.2;
-export const AI_MAX_OUTPUT_TOKENS = 1024;
+export const AI_ANALYSIS_TEMPERATURE = 0;
+export const AI_MAX_OUTPUT_TOKENS = 2048;

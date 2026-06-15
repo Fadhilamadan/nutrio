@@ -24,18 +24,52 @@ export const FOOD_ANALYSIS_PROMPTS = {
 - Sauces and condiments: soy sauce, sambal, peanut sauce, and coconut milk add significant calories — factor in ~50-150cal depending on dish.
 - Plate composition: typical nasi campur (mixed rice) has ~40% rice, ~30% protein, ~20% vegetables, ~10% sambal/sides.
 
+## Food Identification Guide
+Use these visual cues to distinguish commonly confused foods:
+
+### Proteins
+- **Fish**: Flaky texture visible, lighter/white flesh, often has skin with scales, tail or bone structure visible, fish fillet or whole fish shape. Common forms: fried fish, fish curry, fish fillet with skin.
+- **Chicken**: More uniform/dense meat texture, no scales, rounded bone shapes (drumstick, wing, thigh), skin is smooth. Common forms: fried chicken, grilled chicken, chicken curry, shredded chicken.
+- **Beef/Red meat**: Darker and denser than chicken, visible grain or fibrous when shredded (e.g., rendang). Common forms: beef rendang, beef stir-fry, beef soup.
+- **Tofu**: Pale/cream-colored, soft block or cube shape, smooth surface, no grain or fiber. Common forms: fried tofu, tofu soup, tahu goreng.
+- **Tempeh**: Dense cake with visible white mold veins/seed-like pattern, brownish color, fermented nutty appearance. Common forms: tempeh goreng, tempeh orek.
+- **Egg**: Yellow or orange center (yolk), white outer (albumin), round or folded shape. Common forms: fried egg (sunny side up or overcooked), boiled egg, omelette, scrambled.
+
+### Carbohydrates
+- **White rice**: Small distinct oval grains, white, piled shape (can be a mound on plate). Indicates steamed rice.
+- **Fried rice**: Grains coated in dark/brown soy, mixed with small bits of egg/meat/scallions, slightly oily sheen.
+- **Noodles**: Long thin strands, yellow (egg noodle) or white/transparent (vermicelli/bihun). Common: mie goreng, kwetiau, bihun goreng.
+- **Potato**: Chunky yellow/white blocks, soft/crumbly appearance when cooked.
+- **Bread**: Browned crust, spongy texture inside, sliced or bun shape.
+
+### Vegetables
+- **Kangkung (water spinach)**: Hollow stems, arrow/spade-shaped leaves, dark green color when cooked.
+- **Broccoli**: Tree-like clusters of small dark green florets on a light green thick stem.
+- **Cabbage**: Layered pale green or white leaves, shredded or wedge-shaped when cooked.
+- **Mixed vegetables**: Combination of sliced carrots (orange), beans (green), corn (yellow), peas — colorful appearance.
+- **Sambal/chili paste**: Red or orange paste/sauce, often in a small mound at the plate edge, glossy oily appearance.
+
+### Sauces & Soups
+- **Broth-based soup**: Clear or slightly cloudy liquid with floating ingredients (tofu, veggies, meat). Minimal calories in liquid itself.
+- **Coconut milk/curry**: Opaque, rich, white/cream/orange/yellow liquid coating ingredients. Significant calories from coconut milk.
+
 ## Output Rules
 Return ONLY a raw JSON object. Do NOT wrap it in markdown code blocks, backticks, or any other formatting. Do NOT include any text before or after the JSON.
-The JSON must have these exact keys:
-- mealName: string — short descriptive name
-- items: string[] — names of recognized food items (e.g. ["rice", "grilled chicken breast"])
-- calories: number — total estimated kcal
-- protein: number — total grams
-- carbs: number — total grams
-- fat: number — total grams
-- servingEstimate: string — short, concise portion description (e.g. "1.5 cups rice, 1 chicken thigh")
-- confidence: number — 0.0 to 1.0 score reflecting photo quality and estimate certainty
-- notes: string — one short sentence about confidence or assumptions`,
+
+The JSON must have exactly this structure:
+{
+  "mealName": "Grilled fish with rice and vegetables",
+  "items": ["grilled fish", "steamed rice", "stir-fried kangkung"],
+  "calories": 550,
+  "protein": 35,
+  "carbs": 60,
+  "fat": 15,
+  "servingEstimate": "1 medium fish fillet, 1.5 cups rice, 0.5 cup vegetables",
+  "confidence": 0.85,
+  "notes": "Well-lit top-down photo, portions clearly visible"
+}
+
+Use these exact key names. The values above are examples — replace with actual estimates.`,
 
   user: "Analyze this food image using the nutritionist guidelines above.",
 } as const;
