@@ -30,12 +30,12 @@ export function TodayDashboard({ user, meals, targets, onConfigureTargets }: Tod
       exit={{ opacity: 0, y: -18 }}
     >
       <div className="surface-card soft-shadow rounded-xl p-5">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div className="min-w-0">
             <p className="text-sm text-[var(--ink-muted)]">Today for</p>
-            <h1 className="text-2xl font-bold tracking-[-0.025em] text-[var(--ink)]">{user.name.split(" ")[0]}</h1>
+            <h1 className="text-2xl font-bold tracking-[-0.025em] text-[var(--ink)]">{user.name}</h1>
           </div>
-          <p className="rounded-full bg-[var(--surface)] px-3 py-1 text-xs font-semibold text-[var(--primary)] ring-1 ring-[var(--hairline)]">
+          <p className="shrink-0 rounded-full bg-[var(--surface)] px-3 py-1 text-xs font-semibold text-[var(--primary)] ring-1 ring-[var(--hairline)]">
             {todayMeals.length} meals
           </p>
         </div>
