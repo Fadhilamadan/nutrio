@@ -53,6 +53,7 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
   const [draftTargets, setDraftTargets] = useState(targets ?? emptyTargets);
   const [saveError, setSaveError] = useState("");
   const [isSaving, startSave] = useTransition();
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof Targets, string>>>({});
   const [showCalculator, setShowCalculator] = useState(!targets);
   const [age, setAge] = useState(30);
   const [sex, setSex] = useState<Sex>("male");
@@ -63,6 +64,7 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
 
   function updateNumber(field: keyof Omit<Targets, "reminderTime">, value: string) {
     setDraftTargets((currentTargets) => ({ ...currentTargets, [field]: Number(value) || 0 }));
+    setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
   }
 
   function calculateTargets() {
@@ -80,10 +82,22 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
       fat,
       reminderTime: currentTargets.reminderTime || "19:30",
     }));
+    setFieldErrors({});
+    setShowCalculator(false);
   }
 
   function saveTargets() {
     setSaveError("");
+
+    const errors: Partial<Record<keyof Targets, string>> = {};
+    if (!draftTargets.calories || draftTargets.calories <= 0) errors.calories = "Must be greater than 0";
+    if (!draftTargets.protein || draftTargets.protein <= 0) errors.protein = "Must be greater than 0";
+    if (!draftTargets.carbs || draftTargets.carbs <= 0) errors.carbs = "Must be greater than 0";
+    if (!draftTargets.fat || draftTargets.fat <= 0) errors.fat = "Must be greater than 0";
+
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
     startSave(async () => {
       try {
         await onSave(draftTargets);
@@ -92,6 +106,14 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
       }
     });
   }
+
+  const isDirty = targets !== null && (
+    draftTargets.calories !== targets.calories ||
+    draftTargets.protein !== targets.protein ||
+    draftTargets.carbs !== targets.carbs ||
+    draftTargets.fat !== targets.fat ||
+    draftTargets.reminderTime !== targets.reminderTime
+  );
 
   return (
     <form className="space-y-5">
@@ -209,8 +231,16 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
       </section>
       <section className="surface-card space-y-4 rounded-xl p-5">
         <div>
-          <h2 className="text-lg font-bold text-[var(--ink)]">Final targets</h2>
-          <p className="mt-1 text-sm text-[var(--ink-muted)]">Review or edit these values before saving to Notion.</p>
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-bold text-[var(--ink)]">Your targets</h2>
+            {isDirty ? (
+              <span className="animate-pulse inline-flex items-center gap-1 rounded-full bg-[var(--warning)]/15 px-2.5 py-0.5 text-xs font-medium text-[var(--warning)]">
+                <span className="size-1.5 rounded-full bg-[var(--warning)]" />
+                Unsaved
+              </span>
+            ) : null}
+          </div>
+          <p className="mt-1 text-sm text-[var(--ink-muted)]">These are your daily nutrition targets. Adjust any value and save.</p>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
@@ -218,43 +248,52 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
             <Input
               id="target-calories"
               inputMode="numeric"
+              className={fieldErrors.calories ? "border-[var(--danger)]" : undefined}
               value={draftTargets.calories || ""}
               onChange={(event) => updateNumber("calories", event.target.value)}
             />
+            {fieldErrors.calories ? <p className="text-xs text-[var(--danger)]">{fieldErrors.calories}</p> : null}
           </div>
           <div className="space-y-2">
             <Label htmlFor="target-protein">Protein</Label>
             <Input
               id="target-protein"
               inputMode="numeric"
+              className={fieldErrors.protein ? "border-[var(--danger)]" : undefined}
               value={draftTargets.protein || ""}
               onChange={(event) => updateNumber("protein", event.target.value)}
             />
+            {fieldErrors.protein ? <p className="text-xs text-[var(--danger)]">{fieldErrors.protein}</p> : null}
           </div>
           <div className="space-y-2">
             <Label htmlFor="target-carbs">Carbs</Label>
             <Input
               id="target-carbs"
               inputMode="numeric"
+              className={fieldErrors.carbs ? "border-[var(--danger)]" : undefined}
               value={draftTargets.carbs || ""}
               onChange={(event) => updateNumber("carbs", event.target.value)}
             />
+            {fieldErrors.carbs ? <p className="text-xs text-[var(--danger)]">{fieldErrors.carbs}</p> : null}
           </div>
           <div className="space-y-2">
             <Label htmlFor="target-fat">Fat</Label>
             <Input
               id="target-fat"
               inputMode="numeric"
+              className={fieldErrors.fat ? "border-[var(--danger)]" : undefined}
               value={draftTargets.fat || ""}
               onChange={(event) => updateNumber("fat", event.target.value)}
             />
+            {fieldErrors.fat ? <p className="text-xs text-[var(--danger)]">{fieldErrors.fat}</p> : null}
           </div>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 overflow-hidden">
           <Label htmlFor="reminder">Reminder time</Label>
           <Input
             id="reminder"
             type="time"
+            className="min-w-0"
             value={draftTargets.reminderTime}
             onChange={(event) =>
               setDraftTargets((currentTargets) => ({ ...currentTargets, reminderTime: event.target.value }))
