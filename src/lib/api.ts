@@ -1,3 +1,4 @@
+import type { AiProviderName } from "@/lib/ai";
 import type { AnalysisResult, Meal, MealPage, Settings, Targets, User } from "@/lib/types";
 
 type NewMeal = Omit<Meal, "id" | "time">;
@@ -85,6 +86,10 @@ export async function saveTargets(targets: Targets) {
 
 export async function getSettings() {
   return await requestJson<Settings>("/api/settings");
+}
+
+export async function getDefaultModels() {
+  return requestJson<Record<AiProviderName, string>>("/api/settings/defaults");
 }
 
 export async function saveSettings(settings: Settings) {

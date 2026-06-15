@@ -13,5 +13,9 @@ export function AppSessionProvider({ children }: AppSessionProviderProps) {
     void navigator.serviceWorker.register("/sw.js").catch(() => undefined);
   }, []);
 
-  return <SessionProvider>{children}</SessionProvider>;
+  return (
+    <SessionProvider refetchInterval={15 * 60} refetchOnWindowFocus={true}>
+      {children}
+    </SessionProvider>
+  );
 }

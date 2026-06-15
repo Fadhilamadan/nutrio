@@ -15,3 +15,14 @@ export function displayMealDate(value: string): string {
   const year = input.getUTCFullYear();
   return `${day} ${month} ${year}`;
 }
+
+export function displayMealTime(value: string): string {
+  if (!value) return "";
+  const input = new Date(value);
+  if (Number.isNaN(input.getTime())) return "";
+  return input.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+}

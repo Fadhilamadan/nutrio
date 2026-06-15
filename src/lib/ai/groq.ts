@@ -7,7 +7,7 @@ import type { AnalysisResult } from "@/lib/types";
 
 export class GroqService implements ProviderService {
   async analyzeImage(imageBase64: string, apiKey: string, model: string): Promise<AnalysisResult> {
-    const effectiveModel = model || process.env.GROQ_DEFAULT_MODEL || "llama-3.2-90b-vision-preview";
+    const effectiveModel = model || process.env.GROQ_DEFAULT_MODEL || "meta-llama/llama-4-scout-17b-16e-instruct";
 
     const response = await fetchWithTimeout("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -36,7 +36,14 @@ export class GroqService implements ProviderService {
       const errorBody = (await response.json().catch(() => null)) as {
         error?: { message?: string };
       } | null;
-      throw new Error(errorBody?.error?.message ?? `Groq request failed: ${response.status}`);
+      const message = errorBody?.error?.message ?? "";
+      if (response.status === 400 && message.includes("content must be a string")) {
+        throw new Error(
+          `"${effectiveModel}" does not support image analysis. ` +
+            "Set a vision-capable model in Settings, e.g. meta-llama/llama-4-scout-17b-16e-instruct.",
+        );
+      }
+      throw new Error(message || `Groq request failed: ${response.status}`);
     }
 
     const payload = (await response.json()) as {

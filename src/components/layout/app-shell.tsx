@@ -74,8 +74,16 @@ export function AppShell() {
     removeHistoryMeal,
   } = useHistoryMeals(activeUser);
   const { targets, targetsError, saveTargets } = useTargets(activeUser);
-  const { settings, settingsError, isLoadingSettings, installPrompt, saveSettings, installPwa, requestNotifications } =
-    useSettings(activeUser);
+  const {
+    settings,
+    settingsError,
+    isLoadingSettings,
+    installPrompt,
+    defaultModels,
+    saveSettings,
+    installPwa,
+    requestNotifications,
+  } = useSettings(activeUser);
 
   const [screen, setScreen] = useState<Screen>("dashboard");
 
@@ -123,7 +131,7 @@ export function AppShell() {
       if (!historyQuery.trim()) {
         prependHistoryMeal(savedMeal);
       }
-      setScreen("dashboard");
+      setScreen("history");
     } catch (error) {
       console.error("Failed to save meal:", error);
     }
@@ -232,6 +240,7 @@ export function AppShell() {
                     <ErrorBoundary>
                       <SettingsScreen
                         settings={settings}
+                        defaultModels={defaultModels}
                         canInstallPwa={Boolean(installPrompt)}
                         onInstallPwa={installPwa}
                         onRequestNotifications={requestNotifications}

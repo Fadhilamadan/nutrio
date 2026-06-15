@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Clock, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { displayMealTime } from "@/lib/date";
 import type { Meal } from "@/lib/types";
 
 type MealCardProps = {
@@ -33,18 +34,16 @@ export function MealCard({ meal, onEdit, onDelete }: MealCardProps) {
   return (
     <article className="surface-card rounded-xl p-4">
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <h3 className="font-semibold text-[var(--ink)]">{meal.name}</h3>
-          <p className="mt-1 flex items-center gap-1.5 text-xs text-[var(--ink-muted)]">
-            <Clock className="size-3.5" />
-            {meal.time} · {meal.servingEstimate}
+        <h3 className="font-semibold text-[var(--ink)]">{meal.name}</h3>
+        <div className="shrink-0 text-right">
+          <p className="text-base font-bold text-[var(--ink)]">
+            {meal.calories}
+            <span className="text-xs font-normal text-[var(--ink-muted)]"> kcal</span>
           </p>
-        </div>
-        <div className="text-right">
-          <p className="text-lg font-bold text-[var(--ink)]">{meal.calories}</p>
-          <p className="text-xs text-[var(--ink-muted)]">kcal</p>
+          <p className="text-xs text-[var(--ink-muted)]">{displayMealTime(meal.date)}</p>
         </div>
       </div>
+      {meal.servingEstimate ? <p className="mt-1 text-xs text-[var(--ink-muted)]">{meal.servingEstimate}</p> : null}
       <div className="mt-3 flex flex-wrap gap-2 text-xs text-[var(--ink-muted)]">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-soft)] px-2.5 py-1 text-[var(--ink-muted)]">
           <span className="size-1.5 rounded-full bg-[var(--success)]" />P {meal.protein}g
@@ -59,7 +58,9 @@ export function MealCard({ meal, onEdit, onDelete }: MealCardProps) {
           {Math.round(meal.confidence * 100)}% AI
         </span>
       </div>
-      <p className="mt-3 text-xs leading-5 text-[var(--ink-muted)]">{meal.items.join(", ")}</p>
+      {meal.items.length > 0 ? (
+        <p className="mt-2 text-xs leading-5 text-[var(--ink-muted)]">{meal.items.join(" · ")}</p>
+      ) : null}
       {confirmDelete ? (
         <div className="surface-soft mt-4 rounded-xl p-3">
           <p className="text-sm font-semibold text-[var(--ink)]">Archive this meal?</p>

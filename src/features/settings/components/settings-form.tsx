@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, KeyRound, Smartphone } from "lucide-react";
+import { Bell, CheckCircle, ChevronDown, Palette, Smartphone, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ import type { Settings } from "@/lib/types";
 
 type SettingsFormProps = {
   settings: Settings;
+  defaultModels: Record<AiProviderName, string> | null;
   canInstallPwa: boolean;
   onInstallPwa: () => void;
   onRequestNotifications: () => void;
@@ -21,15 +22,59 @@ type SettingsFormProps = {
 };
 
 const providerTips: Record<AiProviderName, string> = {
-  Gemini: "Gemini 2.5 Flash: 1,500 req/day free, no credit card required.",
-  Groq: "Groq: 14,400 req/day free tier. Llama 4 / Pixtral vision models.",
-  OpenRouter: "Access many free models via openrouter/free. Single API key for multiple providers.",
-  HuggingFace: "Free Inference API, rate-limited, no credit card required.",
-  Mistral: "Pixtral vision model. 1B tokens/month free, 5 RPM rate limit.",
+  Gemini: "Best for beginners — 1,500 free requests daily, reliable, no credit card needed.",
+  Groq: "Blazing fast responses with a generous 14,400 free requests per day.",
+  OpenRouter: "One key unlocks many models including free options. Great for experimenting.",
+  HuggingFace: "Open-source AI models with free tier access. Community-driven.",
+  Mistral: "Privacy-focused European AI. 1 billion free tokens per month.",
 };
+
+function CollapsibleGroup({
+  id: _id,
+  title,
+  icon,
+  isOpen,
+  onToggle,
+  children,
+}: {
+  id: string;
+  title: string;
+  icon: React.ReactNode;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="surface-card rounded-xl overflow-hidden">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex w-full items-center justify-between p-4 md:p-5 text-left cursor-pointer active:scale-[0.99] transition-transform duration-75"
+      >
+        <span className="flex items-center gap-2 font-semibold text-[var(--ink)]">
+          {icon}
+          {title}
+        </span>
+        <ChevronDown
+          className="size-4 text-[var(--ink-muted)] transition-transform duration-200"
+          style={{ rotate: isOpen ? "180deg" : "0deg" }}
+        />
+      </button>
+      <div
+        className="grid transition-[grid-template-rows] duration-200"
+        style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
+      >
+        <div className="overflow-hidden">
+          <div className="px-4 md:px-5 pb-4 md:pb-5 space-y-4">{children}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function SettingsForm({
   settings,
+  defaultModels,
   canInstallPwa,
   onInstallPwa,
   onRequestNotifications,
@@ -38,7 +83,28 @@ export function SettingsForm({
   const [draftSettings, setDraftSettings] = useState(settings);
   const [saveError, setSaveError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["ai", "appearance", "notifications", "app"]));
   const notificationPermission = typeof Notification === "undefined" ? "unsupported" : Notification.permission;
+  const isIOS =
+    /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isStandalone = "standalone" in navigator && navigator.standalone;
+  const pwaInstalled = settings.pwaInstalled || (isIOS && isStandalone);
+
+  const isDirty =
+    draftSettings.aiProvider !== settings.aiProvider ||
+    draftSettings.aiModel !== settings.aiModel ||
+    draftSettings.apiKey !== settings.apiKey ||
+    draftSettings.theme !== settings.theme ||
+    draftSettings.notifications !== settings.notifications;
+
+  function toggleGroup(id: string) {
+    setOpenGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
 
   async function saveSettings() {
     setSaveError("");
@@ -53,107 +119,185 @@ export function SettingsForm({
   }
 
   function changeProvider(provider: AiProviderName) {
-    setDraftSettings((current) => ({ ...current, aiProvider: provider, apiKey: "" }));
+    setDraftSettings((current) => ({
+      ...current,
+      aiProvider: provider,
+      aiModel: defaultModels?.[provider] ?? current.aiModel,
+      apiKey: "",
+    }));
   }
 
   return (
-    <form className="surface-card space-y-5 rounded-xl p-5">
-      <div className="surface-soft rounded-xl p-4 text-sm leading-6">
-        <p className="font-semibold text-[var(--ink)]">AI Provider &mdash; bring your own key</p>
-        <p className="mt-1 text-[var(--ink-muted)]">
-          Nutrio does not bundle API costs. Choose a provider and enter your own API key. Keys are stored in your
-          browser only.
+    <form className="space-y-5">
+      <div className="surface-card rounded-xl p-5">
+        <div className="flex items-center gap-2">
+          <h2 className="text-xl font-bold tracking-[-0.025em] text-[var(--ink)]">AI & app settings</h2>
+          {isDirty ? (
+            <span className="animate-pulse inline-flex items-center gap-1 rounded-full bg-[var(--warning)]/15 px-2.5 py-0.5 text-xs font-medium text-[var(--warning)]">
+              <span className="size-1.5 rounded-full bg-[var(--warning)]" />
+              Unsaved
+            </span>
+          ) : null}
+        </div>
+        <p className="mt-2 text-sm leading-6 text-[var(--ink-muted)]">
+          Configure your AI provider, theme, notifications, and app preferences. Your API key stays in your browser — we
+          never upload it.
         </p>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="provider">AI Provider</Label>
-        <Select value={draftSettings.aiProvider} onValueChange={changeProvider}>
-          <SelectTrigger id="provider">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {AI_PROVIDERS.map((provider) => (
-              <SelectItem key={provider} value={provider}>
-                {AI_PROVIDER_LABELS[provider]}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <p className="text-xs text-[var(--ink-muted)]">{providerTips[draftSettings.aiProvider]}</p>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="model">AI Model</Label>
-        <Input
-          id="model"
-          value={draftSettings.aiModel}
-          onChange={(event) => setDraftSettings((current) => ({ ...current, aiModel: event.target.value }))}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="key">API Key</Label>
-        <Input
-          id="key"
-          type="password"
-          placeholder="Stored locally in browser"
-          value={draftSettings.apiKey}
-          onChange={(event) => setDraftSettings((current) => ({ ...current, apiKey: event.target.value }))}
-        />
-      </div>
-      <div className="surface-soft rounded-xl p-4 text-sm">
-        <KeyRound className="mb-2 size-4 text-[var(--primary)]" />
-        Raw API keys are not saved to Notion. Only a HasAPIKey flag belongs in metadata.
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="theme">Theme</Label>
-        <Select
-          value={draftSettings.theme}
-          onValueChange={(value: Settings["theme"]) => setDraftSettings((current) => ({ ...current, theme: value }))}
+
+      <div className="space-y-4">
+        <CollapsibleGroup
+          id="ai"
+          title="AI & Intelligence"
+          icon={<Sparkles className="size-4" />}
+          isOpen={openGroups.has("ai")}
+          onToggle={() => toggleGroup("ai")}
         >
-          <SelectTrigger id="theme">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="System">System</SelectItem>
-            <SelectItem value="Light">Light</SelectItem>
-            <SelectItem value="Dark">Dark</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="surface-soft space-y-3 rounded-xl p-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="font-semibold text-[var(--ink)]">Notifications</p>
-            <p className="text-sm text-[var(--ink-muted)]">Daily reminders while Nutrio is open</p>
+          <div className="bg-[var(--surface-soft)] rounded-xl p-4 text-sm leading-6">
+            <p className="font-semibold text-[var(--ink)]">How AI works in Nutrio</p>
+            <p className="mt-1 text-[var(--ink-muted)]">
+              When you snap a food photo, Nutrio sends it to an AI provider to figure out what is on your plate. Think
+              of it like choosing a GPS app — you pick the provider (Google, Groq, etc.) and bring your own key for
+              access.
+            </p>
           </div>
-          <Switch
-            aria-label="Enable daily macro reminders"
-            checked={draftSettings.notifications}
-            onCheckedChange={(checked) => setDraftSettings((current) => ({ ...current, notifications: checked }))}
-          />
-        </div>
-        <Button
-          type="button"
-          variant="secondary"
-          size="sm"
-          onClick={onRequestNotifications}
-          disabled={notificationPermission === "unsupported"}
+          <div className="space-y-2">
+            <Label htmlFor="provider">AI Provider</Label>
+            <Select value={draftSettings.aiProvider} onValueChange={changeProvider}>
+              <SelectTrigger id="provider">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {AI_PROVIDERS.map((provider) => (
+                  <SelectItem key={provider} value={provider}>
+                    {AI_PROVIDER_LABELS[provider]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-[var(--ink-muted)]">{providerTips[draftSettings.aiProvider]}</p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="model">AI Model</Label>
+            <Input
+              id="model"
+              value={draftSettings.aiModel}
+              onChange={(event) => setDraftSettings((current) => ({ ...current, aiModel: event.target.value }))}
+            />
+            {draftSettings.aiModel === "" ? (
+              <p className="text-xs text-[var(--warning)]">Enter a model name or switch to a default</p>
+            ) : null}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="key">API Key</Label>
+            <Input
+              id="key"
+              type="password"
+              placeholder="Stored locally in browser"
+              value={draftSettings.apiKey}
+              onChange={(event) => setDraftSettings((current) => ({ ...current, apiKey: event.target.value }))}
+            />
+            {draftSettings.apiKey === "" ? (
+              <p className="text-xs text-[var(--warning)]">Add an API key to use AI food analysis</p>
+            ) : null}
+          </div>
+        </CollapsibleGroup>
+
+        <CollapsibleGroup
+          id="appearance"
+          title="Appearance"
+          icon={<Palette className="size-4" />}
+          isOpen={openGroups.has("appearance")}
+          onToggle={() => toggleGroup("appearance")}
         >
-          <Bell className="size-4" />
-          Permission: {notificationPermission}
-        </Button>
+          <div className="space-y-2">
+            <Label htmlFor="theme">Theme</Label>
+            <Select
+              value={draftSettings.theme}
+              onValueChange={(value: Settings["theme"]) =>
+                setDraftSettings((current) => ({ ...current, theme: value }))
+              }
+            >
+              <SelectTrigger id="theme">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="System">System</SelectItem>
+                <SelectItem value="Light">Light</SelectItem>
+                <SelectItem value="Dark">Dark</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CollapsibleGroup>
+
+        <CollapsibleGroup
+          id="notifications"
+          title="Notifications"
+          icon={<Bell className="size-4" />}
+          isOpen={openGroups.has("notifications")}
+          onToggle={() => toggleGroup("notifications")}
+        >
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-[var(--ink-muted)]">Daily reminders while Nutrio is open</p>
+              <Switch
+                aria-label="Enable daily macro reminders"
+                checked={draftSettings.notifications}
+                onCheckedChange={(checked) => setDraftSettings((current) => ({ ...current, notifications: checked }))}
+              />
+            </div>
+            {isIOS ? (
+              <p className="text-xs text-[var(--ink-muted)]">
+                Not supported on iOS. Enable on Android or desktop for daily reminders.
+              </p>
+            ) : (
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={onRequestNotifications}
+                disabled={notificationPermission === "unsupported"}
+              >
+                <Bell className="size-4" />
+                Permission: {notificationPermission}
+              </Button>
+            )}
+          </div>
+        </CollapsibleGroup>
+
+        <CollapsibleGroup
+          id="app"
+          title="App"
+          icon={<Smartphone className="size-4" />}
+          isOpen={openGroups.has("app")}
+          onToggle={() => toggleGroup("app")}
+        >
+          {isIOS ? (
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-sm text-[var(--ink-muted)]">
+                {pwaInstalled ? "Installed from Home Screen" : "Open in Safari → Share → Add to Home Screen"}
+              </p>
+              {pwaInstalled ? <CheckCircle className="size-5 shrink-0 text-[var(--success)]" /> : null}
+            </div>
+          ) : (
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-sm text-[var(--ink-muted)]">Install Nutrio as an app for quick access</p>
+              <Button type="button" variant="secondary" size="sm" onClick={onInstallPwa} disabled={!canInstallPwa}>
+                {settings.pwaInstalled ? "Installed" : "Install"}
+                <Smartphone className="size-4" />
+              </Button>
+            </div>
+          )}
+        </CollapsibleGroup>
       </div>
-      <div className="surface-soft flex items-center justify-between rounded-xl p-4">
-        <div>
-          <p className="font-semibold text-[var(--ink)]">PWA Installation</p>
-          <p className="text-sm text-[var(--ink-muted)]">Install prompt is shown when supported by the browser.</p>
-        </div>
-        <Button type="button" variant="secondary" size="sm" onClick={onInstallPwa} disabled={!canInstallPwa}>
-          {settings.pwaInstalled ? "Installed" : "Install"}
-          <Smartphone className="size-4" />
-        </Button>
-      </div>
+
       {saveError ? <p className="text-sm text-[var(--danger)]">{saveError}</p> : null}
-      <Button type="button" className="w-full" onClick={saveSettings} disabled={isSaving}>
+      <Button
+        type="button"
+        className="w-full active:scale-[0.98] transition-transform duration-75"
+        onClick={saveSettings}
+        disabled={isSaving}
+      >
         {isSaving ? "Saving settings" : "Save settings"}
       </Button>
     </form>

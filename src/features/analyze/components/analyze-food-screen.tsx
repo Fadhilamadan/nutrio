@@ -1,13 +1,16 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import imageCompression from "browser-image-compression";
 import { motion } from "framer-motion";
 import { LoaderCircle, Save } from "lucide-react";
 
 import { LoadingCard } from "@/components/shared/loading-card";
 import { Button } from "@/components/ui/button";
-import { AIAnalysisResultEditor } from "@/features/analyze/components/ai-analysis-result-editor";
+import {
+  AIAnalysisResultEditor,
+  type AIAnalysisResultEditorHandle,
+} from "@/features/analyze/components/ai-analysis-result-editor";
 import { ImageUploader } from "@/features/analyze/components/image-uploader";
 import { analyzeFoodImage, createMealFromAnalysis } from "@/lib/api";
 import type { AnalysisResult, Meal, Settings, User } from "@/lib/types";
@@ -31,13 +34,17 @@ export function AnalyzeFoodScreen({ user, settings, onSaveMeal }: AnalyzeFoodScr
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageName, setImageName] = useState("");
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [originalResult, setOriginalResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [isSaving, setIsSaving] = useState(false);
+  const editorRef = useRef<AIAnalysisResultEditorHandle>(null);
 
   function selectImage(file: File | null) {
     setImageFile(file);
     setImageName(file?.name ?? "");
     setResult(null);
+    setOriginalResult(null);
     setError("");
   }
 
@@ -60,18 +67,27 @@ export function AnalyzeFoodScreen({ user, settings, onSaveMeal }: AnalyzeFoodScr
           apiKey: settings.apiKey,
         });
         setResult(analysis);
+        setOriginalResult(analysis);
       } catch (error) {
         setError(error instanceof Error ? error.message : "Failed to analyze image.");
       }
     });
   }
 
-  function saveMeal() {
-    if (!result) return;
-    onSaveMeal(createMealFromAnalysis(user.id, result));
-    setImageFile(null);
-    setImageName("");
-    setResult(null);
+  async function saveMeal() {
+    if (!result || !editorRef.current?.validate()) return;
+    setIsSaving(true);
+    try {
+      await onSaveMeal(createMealFromAnalysis(user.id, result));
+      setImageFile(null);
+      setImageName("");
+      setResult(null);
+      setOriginalResult(null);
+    } catch {
+      setError("Failed to save meal. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -96,11 +112,13 @@ export function AnalyzeFoodScreen({ user, settings, onSaveMeal }: AnalyzeFoodScr
           rows={4}
         />
       ) : null}
-      {result ? <AIAnalysisResultEditor result={result} onChange={setResult} /> : null}
+      {result && originalResult ? (
+        <AIAnalysisResultEditor ref={editorRef} result={result} originalResult={originalResult} onChange={setResult} />
+      ) : null}
       {result ? (
-        <Button className="w-full" size="lg" onClick={saveMeal}>
-          <Save className="size-5" />
-          Save meal metadata
+        <Button className="w-full" size="lg" disabled={isSaving} onClick={saveMeal}>
+          {isSaving ? <LoaderCircle className="size-5 animate-spin" /> : <Save className="size-5" />}
+          {isSaving ? "Saving to history" : "Save meal metadata"}
         </Button>
       ) : null}
     </motion.section>

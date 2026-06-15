@@ -100,34 +100,34 @@ Open http://localhost:3000.
 
 ### Database schemas
 
-| Database | Properties |
-|----------|-----------|
-| **Users** | `Name` (title), `UserID` (rich text), `Role` (select), `Email` (rich text), `Color` (rich text) |
-| **Meals** | `MealName` (title), `UserID`, `Date`, `Calories`, `Protein`, `Carbs`, `Fat`, `ServingEstimate`, `FoodItems`, `Confidence`, `Notes`, `AIProvider`, `EditedByUser` |
-| **Targets** | `Name` (title), `UserID`, `DailyCalories`, `DailyProtein`, `DailyCarbs`, `DailyFat`, `ReminderTime`, `UpdatedAt` |
-| **Settings** | `Name` (title), `UserID`, `AIProvider`, `AIModel`, `HasAPIKey`, `NotificationEnabled`, `PWAInstalled`, `Theme` |
+| Database     | Properties                                                                                                                                                       |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Users**    | `Name` (title), `UserID` (rich text), `Role` (select), `Email` (rich text), `Color` (rich text)                                                                  |
+| **Meals**    | `MealName` (title), `UserID`, `Date`, `Calories`, `Protein`, `Carbs`, `Fat`, `ServingEstimate`, `FoodItems`, `Confidence`, `Notes`, `AIProvider`, `EditedByUser` |
+| **Targets**  | `Name` (title), `UserID`, `DailyCalories`, `DailyProtein`, `DailyCarbs`, `DailyFat`, `ReminderTime`, `UpdatedAt`                                                 |
+| **Settings** | `Name` (title), `UserID`, `AIProvider`, `AIModel`, `HasAPIKey`, `NotificationEnabled`, `PWAInstalled`, `Theme`                                                   |
 
 Unlisted property types default to rich text. See the PRD for the full
 field specifications.
 
 ### 3. Environment variables
 
-| Variable | Description |
-|----------|-------------|
-| `NEXT_PUBLIC_APP_URL` | Public URL (default: http://localhost:3000) |
-| `AUTH_SECRET` | NextAuth encryption secret |
-| `AUTH_GOOGLE_ID` | Google OAuth client ID |
-| `AUTH_GOOGLE_SECRET` | Google OAuth client secret |
-| `NOTION_TOKEN` | Notion internal integration token |
-| `NOTION_USERS_DB_ID` | Users database ID |
-| `NOTION_MEALS_DB_ID` | Meals database ID |
-| `NOTION_TARGETS_DB_ID` | Targets database ID |
-| `NOTION_SETTINGS_DB_ID` | Settings database ID |
-| `GEMINI_DEFAULT_MODEL` | Default Gemini model |
-| `GROQ_DEFAULT_MODEL` | Default Groq model |
-| `OPENROUTER_DEFAULT_MODEL` | Default OpenRouter model |
-| `HUGGINGFACE_DEFAULT_MODEL` | Default HuggingFace model |
-| `MISTRAL_DEFAULT_MODEL` | Default Mistral model |
+| Variable                    | Description                                 |
+| --------------------------- | ------------------------------------------- |
+| `NEXT_PUBLIC_APP_URL`       | Public URL (default: http://localhost:3000) |
+| `AUTH_SECRET`               | NextAuth encryption secret                  |
+| `AUTH_GOOGLE_ID`            | Google OAuth client ID                      |
+| `AUTH_GOOGLE_SECRET`        | Google OAuth client secret                  |
+| `NOTION_TOKEN`              | Notion internal integration token           |
+| `NOTION_USERS_DB_ID`        | Users database ID                           |
+| `NOTION_MEALS_DB_ID`        | Meals database ID                           |
+| `NOTION_TARGETS_DB_ID`      | Targets database ID                         |
+| `NOTION_SETTINGS_DB_ID`     | Settings database ID                        |
+| `GEMINI_DEFAULT_MODEL`      | Default Gemini model                        |
+| `GROQ_DEFAULT_MODEL`        | Default Groq model                          |
+| `OPENROUTER_DEFAULT_MODEL`  | Default OpenRouter model                    |
+| `HUGGINGFACE_DEFAULT_MODEL` | Default HuggingFace model                   |
+| `MISTRAL_DEFAULT_MODEL`     | Default Mistral model                       |
 
 ## Usage
 
@@ -143,13 +143,13 @@ field specifications.
 
 Each provider needs its own API key, configured in-app under Settings.
 
-| Provider | Get a key |
-|----------|-----------|
-| Gemini | https://aistudio.google.com |
-| Groq | https://console.groq.com |
-| OpenRouter | https://openrouter.ai (free tier available) |
-| HuggingFace | https://huggingface.co/settings/tokens |
-| Mistral | https://console.mistral.ai |
+| Provider    | Get a key                                   |
+| ----------- | ------------------------------------------- |
+| Gemini      | https://aistudio.google.com                 |
+| Groq        | https://console.groq.com                    |
+| OpenRouter  | https://openrouter.ai (free tier available) |
+| HuggingFace | https://huggingface.co/settings/tokens      |
+| Mistral     | https://console.mistral.ai                  |
 
 ## Deployment
 
