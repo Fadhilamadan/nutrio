@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import type { AiProviderName } from "@/lib/ai";
 import { AI_PROVIDER_LABELS, AI_PROVIDERS } from "@/lib/ai";
 import type { Settings } from "@/lib/types";
@@ -190,9 +191,9 @@ export function SettingsForm({
           </div>
           <div className="space-y-2">
             <Label htmlFor="key">API Key</Label>
-            <Input
+            <Textarea
               id="key"
-              type="password"
+              rows={2}
               placeholder="Stored locally in browser"
               value={draftSettings.apiKey}
               onChange={(event) => setDraftSettings((current) => ({ ...current, apiKey: event.target.value }))}

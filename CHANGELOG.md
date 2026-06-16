@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.2.0 (2026-06-16)
+
+
+### Features
+
+* AI JSON enforcement, settings redesign, and form validation improvements ([#1](https://github.com/Fadhilamadan/nutrio/issues/1)) ([fc2db00](https://github.com/Fadhilamadan/nutrio/commit/fc2db00bdd097cb6f4b564ceeca22363f4207e6e))
+* **analyze:** add API-key-required banner with navigate to settings ([e09b9cb](https://github.com/Fadhilamadan/nutrio/commit/e09b9cbd6f242d7a34c254413eaf58a58ec8f83a))
+* initial app ([13b3741](https://github.com/Fadhilamadan/nutrio/commit/13b374114613ee39c2f9f0244bfb496b10bd2d2f))
+* **settings:** replace API key password input with textarea ([35a7417](https://github.com/Fadhilamadan/nutrio/commit/35a741705a72d80571fa61737cf6e0a8c9e1f2f2))
+* **ui:** add global license footer and align with CC BY-NC-SA 4.0 ([f6b29b6](https://github.com/Fadhilamadan/nutrio/commit/f6b29b61d104760af2f9758e83f695ca4745ff2c))
+
+
+### Bug Fixes
+
+* clear API keys from localStorage on logout and session expiry ([2f67bd5](https://github.com/Fadhilamadan/nutrio/commit/2f67bd5df222a3783ed23afb8037f837d6f1b58a))
+
 ## 1.1.0 (2026-06-15)
 
 
