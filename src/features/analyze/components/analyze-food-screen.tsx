@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import imageCompression from "browser-image-compression";
 import { motion } from "framer-motion";
-import { LoaderCircle, Save } from "lucide-react";
+import { KeyRound, LoaderCircle, Save, Settings as SettingsIcon } from "lucide-react";
 
 import { LoadingCard } from "@/components/shared/loading-card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ type AnalyzeFoodScreenProps = {
   user: User;
   settings: Settings;
   onSaveMeal: (meal: Omit<Meal, "id" | "time">) => Promise<void> | void;
+  onNavigateToSettings: () => void;
 };
 
 function fileToDataUrl(file: File) {
@@ -30,7 +31,7 @@ function fileToDataUrl(file: File) {
   });
 }
 
-export function AnalyzeFoodScreen({ user, settings, onSaveMeal }: AnalyzeFoodScreenProps) {
+export function AnalyzeFoodScreen({ user, settings, onSaveMeal, onNavigateToSettings }: AnalyzeFoodScreenProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageName, setImageName] = useState("");
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -97,30 +98,58 @@ export function AnalyzeFoodScreen({ user, settings, onSaveMeal }: AnalyzeFoodScr
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -18 }}
     >
-      <ImageUploader imageName={imageName} onSelectImage={selectImage} />
-      <Button className="w-full" size="lg" disabled={!imageName || isPending} onClick={runAnalysis}>
-        {isPending ? <LoaderCircle className="size-5 animate-spin" /> : null}
-        {isPending ? "AI scanning plate" : "Analyze food"}
-      </Button>
-      {error ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm leading-6 text-red-900">{error}</div>
-      ) : null}
-      {isPending ? (
-        <LoadingCard
-          title="Estimating nutrition"
-          message={`${settings.aiProvider} is reading the image and returning editable macro metadata.`}
-          rows={4}
-        />
-      ) : null}
-      {result && originalResult ? (
-        <AIAnalysisResultEditor ref={editorRef} result={result} originalResult={originalResult} onChange={setResult} />
-      ) : null}
-      {result ? (
-        <Button className="w-full" size="lg" disabled={isSaving} onClick={saveMeal}>
-          {isSaving ? <LoaderCircle className="size-5 animate-spin" /> : <Save className="size-5" />}
-          {isSaving ? "Saving to history" : "Save meal metadata"}
-        </Button>
-      ) : null}
+      {!settings.apiKey ? (
+        <div className="surface-card rounded-xl p-5">
+          <div className="flex gap-4">
+            <div className="mt-0.5 grid size-10 shrink-0 place-items-center rounded-xl bg-[color-mix(in_srgb,var(--primary)_10%,var(--surface))] text-[var(--primary)]">
+              <KeyRound className="size-5" />
+            </div>
+            <div className="min-w-0">
+              <h3 className="text-base font-bold tracking-[-0.0125em] text-[var(--ink)]">API key required</h3>
+              <p className="mt-1 text-sm leading-6 text-[var(--ink-muted)]">
+                Set up an AI provider and add your API key in Settings to analyze food photos. Your key stays in your
+                browser — we never upload it.
+              </p>
+              <Button variant="secondary" size="sm" className="mt-3" onClick={onNavigateToSettings}>
+                <SettingsIcon className="size-4" />
+                Go to Settings
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          <ImageUploader imageName={imageName} onSelectImage={selectImage} />
+          <Button className="w-full" size="lg" disabled={!imageName || isPending} onClick={runAnalysis}>
+            {isPending ? <LoaderCircle className="size-5 animate-spin" /> : null}
+            {isPending ? "AI scanning plate" : "Analyze food"}
+          </Button>
+          {error ? (
+            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm leading-6 text-red-900">{error}</div>
+          ) : null}
+          {isPending ? (
+            <LoadingCard
+              title="Estimating nutrition"
+              message={`${settings.aiProvider} is reading the image and returning editable macro metadata.`}
+              rows={4}
+            />
+          ) : null}
+          {result && originalResult ? (
+            <AIAnalysisResultEditor
+              ref={editorRef}
+              result={result}
+              originalResult={originalResult}
+              onChange={setResult}
+            />
+          ) : null}
+          {result ? (
+            <Button className="w-full" size="lg" disabled={isSaving} onClick={saveMeal}>
+              {isSaving ? <LoaderCircle className="size-5 animate-spin" /> : <Save className="size-5" />}
+              {isSaving ? "Saving to history" : "Save meal metadata"}
+            </Button>
+          ) : null}
+        </>
+      )}
     </motion.section>
   );
 }

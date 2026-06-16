@@ -209,7 +209,12 @@ export function AppShell() {
                 {screen === "analyze" ? (
                   <Suspense key="analyze" fallback={<LoadingCard title="Loading" message="" rows={1} />}>
                     <ErrorBoundary>
-                      <AnalyzeFoodScreen user={activeUser} settings={settings} onSaveMeal={addMeal} />
+                      <AnalyzeFoodScreen
+                        user={activeUser}
+                        settings={settings}
+                        onSaveMeal={addMeal}
+                        onNavigateToSettings={() => setScreen("settings")}
+                      />
                     </ErrorBoundary>
                   </Suspense>
                 ) : null}
