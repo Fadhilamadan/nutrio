@@ -105,10 +105,10 @@ export function AnalyzeFoodScreen({ user, settings, onSaveMeal, onNavigateToSett
               <KeyRound className="size-5" />
             </div>
             <div className="min-w-0">
-              <h3 className="text-base font-bold tracking-[-0.0125em] text-[var(--ink)]">API key required</h3>
+              <h3 className="text-base font-bold tracking-[-0.0125em] text-[var(--ink)]">Start analyzing food</h3>
               <p className="mt-1 text-sm leading-6 text-[var(--ink-muted)]">
-                Set up an AI provider and add your API key in Settings to analyze food photos. Your key stays in your
-                browser — we never upload it.
+                Connect an AI provider in Settings to analyze your meals. Your API key stays in your browser, never on
+                our servers.
               </p>
               <Button variant="secondary" size="sm" className="mt-3" onClick={onNavigateToSettings}>
                 <SettingsIcon className="size-4" />
