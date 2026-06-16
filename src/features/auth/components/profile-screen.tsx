@@ -5,9 +5,9 @@ import { motion } from "framer-motion";
 import { GitFork, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { clearNutrioApiKeys } from "@/lib/utils";
 import { UserProfileCard } from "@/features/auth/components/user-profile-card";
 import type { User } from "@/lib/types";
+import { clearNutrioApiKeys } from "@/lib/utils";
 
 type ProfileScreenProps = {
   user: User;
@@ -58,7 +58,14 @@ export function ProfileScreen({ user }: ProfileScreenProps) {
           </div>
         </div>
       </section>
-      <Button variant="secondary" className="w-full" onClick={() => { clearNutrioApiKeys(); signOut(); }}>
+      <Button
+        variant="secondary"
+        className="w-full"
+        onClick={() => {
+          clearNutrioApiKeys();
+          signOut();
+        }}
+      >
         <LogOut className="size-4" />
         Logout
       </Button>
