@@ -2,6 +2,7 @@
 
 import { lazy, Suspense, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Heart } from "lucide-react";
 
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
 import { FloatingCameraButton } from "@/components/layout/floating-camera-button";
@@ -21,6 +22,7 @@ import { useTargets } from "@/features/targets/hooks/use-targets";
 import { deleteMeal as deleteMealApi, saveMeal, updateMeal as updateMealApi } from "@/lib/api";
 import { dateKey } from "@/lib/date";
 import type { Meal, Screen } from "@/lib/types";
+import { version } from "../../../package.json";
 
 const gradientDecoration = (
   <div className="pointer-events-none absolute inset-x-0 top-0 h-52 bg-[radial-gradient(circle_at_20%_10%,rgba(98,174,240,0.18),transparent_32%),radial-gradient(circle_at_88%_22%,rgba(214,182,246,0.22),transparent_28%)]" />
@@ -258,6 +260,29 @@ export function AppShell() {
                 ) : null}
               </AnimatePresence>
             ) : null}
+          </div>
+          <div className="pb-2 pt-4 mt-6 text-center text-xs text-[var(--ink-faint)]">
+            <p className="flex items-center justify-center gap-1">
+              <Heart className="size-3 fill-current" />
+              <a
+                href="https://github.com/Fadhilamadan/nutrio"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 transition-colors hover:text-[var(--ink-muted)]"
+              >
+                Nutrio
+              </a>
+              v{version}
+              <span aria-hidden="true">&middot;</span>
+              <a
+                href="https://creativecommons.org/licenses/by-nc-sa/4.0"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 transition-colors hover:text-[var(--ink-muted)]"
+              >
+                CC BY-NC-SA 4.0
+              </a>
+            </p>
           </div>
         </main>
         {screen !== "analyze" ? <FloatingCameraButton onClick={() => setScreen("analyze")} /> : null}

@@ -2,7 +2,7 @@
 
 import { signOut } from "next-auth/react";
 import { motion } from "framer-motion";
-import { LogOut } from "lucide-react";
+import { GitFork, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { UserProfileCard } from "@/features/auth/components/user-profile-card";
@@ -27,6 +27,35 @@ export function ProfileScreen({ user }: ProfileScreenProps) {
           This authenticated user is connected to a Notion user record. Meals, targets, and settings are isolated by
           this user ID.
         </p>
+      </section>
+      <section className="surface-card rounded-xl p-5">
+        <div className="flex items-start gap-3">
+          <GitFork className="mt-0.5 size-5 shrink-0 text-[var(--ink-muted)]" />
+          <div>
+            <h2 className="text-lg font-bold text-[var(--ink)]">Open Source</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--ink-muted)]">
+              Nutrio is built in the open. Fork it,{" "}
+              <a
+                href="https://github.com/Fadhilamadan/nutrio"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--primary)] underline underline-offset-2"
+              >
+                self-host it
+              </a>
+              , or{" "}
+              <a
+                href="https://github.com/Fadhilamadan/nutrio"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--primary)] underline underline-offset-2"
+              >
+                jump in on GitHub
+              </a>{" "}
+              — contributions welcome.
+            </p>
+          </div>
+        </div>
       </section>
       <Button variant="secondary" className="w-full" onClick={() => signOut()}>
         <LogOut className="size-4" />
