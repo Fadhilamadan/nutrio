@@ -16,9 +16,7 @@ userColorClasses.default = "from-slate-200 to-slate-300";
 export function UserProfileCard({ user }: UserProfileCardProps) {
   const parts = user.name.split(" ");
   const initials =
-    parts.length > 1
-      ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-      : parts[0].slice(0, 2).toUpperCase();
+    parts.length > 1 ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase() : parts[0].slice(0, 2).toUpperCase();
 
   return (
     <article className="surface-card rounded-xl p-5">
