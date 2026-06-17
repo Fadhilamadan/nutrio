@@ -69,8 +69,7 @@ export const AIAnalysisResultEditor = forwardRef<AIAnalysisResultEditorHandle, A
         <div className="flex items-center gap-2">
           <div className="flex-1">
             <h2 className="text-lg font-bold text-[var(--ink)]">Editable AI result</h2>
-            <p className="text-sm text-[var(--ink-muted)]">Review before saving metadata to Notion.</p>
-            <p className="mt-1 text-xs text-[var(--ink-muted)]">Results are AI estimates — always verify accuracy.</p>
+            <p className="text-sm text-[var(--ink-muted)]">Accuracy depends on the AI model — review before saving.</p>
           </div>
           {isDirty ? (
             <span className="inline-flex animate-pulse items-center gap-1 rounded-full bg-[var(--warning)]/15 px-2.5 py-0.5 text-xs font-medium text-[var(--warning)]">
