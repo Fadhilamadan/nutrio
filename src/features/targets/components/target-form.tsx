@@ -56,12 +56,12 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
   const [isSaving, startSave] = useTransition();
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof Targets, string>>>({});
   const [showCalculator, setShowCalculator] = useState(!targets);
-  const [age, setAge] = useState(30);
+  const [age, setAge] = useState(31);
   const [sex, setSex] = useState<Sex>("male");
   const [height, setHeight] = useState(170);
-  const [weight, setWeight] = useState(70);
+  const [weight, setWeight] = useState(60);
   const [activity, setActivity] = useState<Activity>("moderate");
-  const [goal, setGoal] = useState<Goal>("maintain");
+  const [goal, setGoal] = useState<Goal>("gain");
   const [bodyFat, setBodyFat] = useState("");
 
   function updateNumber(field: keyof Omit<Targets, "reminderTime">, value: string) {
