@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Camera } from "lucide-react";
 
 type FloatingCameraButtonProps = {
@@ -8,14 +7,6 @@ type FloatingCameraButtonProps = {
 };
 
 export function FloatingCameraButton({ onClick }: FloatingCameraButtonProps) {
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-
-  useEffect(() => {
-    Promise.resolve().then(() => setIsTouchDevice(window.matchMedia("(pointer: coarse)").matches));
-  }, []);
-
-  if (!isTouchDevice) return null;
-
   return (
     <button
       onClick={onClick}
