@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,9 +58,12 @@ export function HistoryEditForm({ meal, onSave, onCancel }: HistoryEditFormProps
     startSaving(async () => {
       try {
         await onSave({ ...draft, editedByUser: true });
+        toast.success("Meal updated");
         onCancel();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to save meal edit.");
+        const msg = err instanceof Error ? err.message : "Failed to save meal edit.";
+        setError(msg);
+        toast.error(msg);
       }
     });
   }
@@ -171,7 +175,7 @@ export function HistoryEditForm({ meal, onSave, onCancel }: HistoryEditFormProps
       </div>
       {error ? <p className="text-sm text-[var(--danger)]">{error}</p> : null}
       <div className="flex gap-2">
-        <Button type="button" onClick={saveEditingMeal} disabled={isSaving}>
+        <Button type="button" onClick={saveEditingMeal} disabled={isSaving || !isDirty}>
           {isSaving ? "Saving edit" : "Save edit"}
         </Button>
         <Button type="button" variant="secondary" onClick={onCancel}>
