@@ -14,10 +14,11 @@ const userColorClasses: Record<string, string | undefined> = Object.fromEntries(
 userColorClasses.default = "from-slate-200 to-slate-300";
 
 export function UserProfileCard({ user }: UserProfileCardProps) {
-  const initials = user.name
-    .split(" ")
-    .map((part) => part[0])
-    .join("");
+  const parts = user.name.split(" ");
+  const initials =
+    parts.length > 1
+      ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+      : parts[0].slice(0, 2).toUpperCase();
 
   return (
     <article className="surface-card rounded-xl p-5">
