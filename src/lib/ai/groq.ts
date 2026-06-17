@@ -1,12 +1,17 @@
 import { AI_ANALYSIS_TEMPERATURE, AI_MAX_OUTPUT_TOKENS } from "@/lib/ai/constants";
 import { fetchWithTimeout } from "@/lib/ai/fetch";
 import { parseAnalysis } from "@/lib/ai/parse";
-import { FOOD_ANALYSIS_PROMPTS } from "@/lib/ai/prompt";
+import { buildUserPrompt, FOOD_ANALYSIS_PROMPTS } from "@/lib/ai/prompt";
 import type { ProviderService } from "@/lib/ai/types";
 import type { AnalysisResult } from "@/lib/types";
 
 export class GroqService implements ProviderService {
-  async analyzeImage(imageBase64: string, apiKey: string, model: string): Promise<AnalysisResult> {
+  async analyzeImage(
+    imageBase64: string,
+    apiKey: string,
+    model: string,
+    foodDescription?: string,
+  ): Promise<AnalysisResult> {
     const effectiveModel = model || process.env.GROQ_DEFAULT_MODEL || "meta-llama/llama-4-scout-17b-16e-instruct";
 
     const response = await fetchWithTimeout("https://api.groq.com/openai/v1/chat/completions", {
@@ -22,7 +27,7 @@ export class GroqService implements ProviderService {
           {
             role: "user",
             content: [
-              { type: "text", text: FOOD_ANALYSIS_PROMPTS.user },
+              { type: "text", text: buildUserPrompt(foodDescription) },
               { type: "image_url", image_url: { url: imageBase64 } },
             ],
           },

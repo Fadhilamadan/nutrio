@@ -1,11 +1,16 @@
 import { fetchWithTimeout } from "@/lib/ai/fetch";
 import { parseAnalysis } from "@/lib/ai/parse";
-import { FOOD_ANALYSIS_PROMPTS } from "@/lib/ai/prompt";
+import { buildUserPrompt, FOOD_ANALYSIS_PROMPTS } from "@/lib/ai/prompt";
 import type { ProviderService } from "@/lib/ai/types";
 import type { AnalysisResult } from "@/lib/types";
 
 export class OpenRouterService implements ProviderService {
-  async analyzeImage(imageBase64: string, apiKey: string, model: string): Promise<AnalysisResult> {
+  async analyzeImage(
+    imageBase64: string,
+    apiKey: string,
+    model: string,
+    foodDescription?: string,
+  ): Promise<AnalysisResult> {
     const effectiveModel = model || process.env.OPENROUTER_DEFAULT_MODEL || "openrouter/free";
     const response = await fetchWithTimeout("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
@@ -22,7 +27,7 @@ export class OpenRouterService implements ProviderService {
           {
             role: "user",
             content: [
-              { type: "text", text: FOOD_ANALYSIS_PROMPTS.user },
+              { type: "text", text: buildUserPrompt(foodDescription) },
               { type: "image_url", image_url: { url: imageBase64 } },
             ],
           },
