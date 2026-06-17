@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     const body = parseAnalyzeRequest(await request.json());
 
     const provider = getProvider(body.provider);
-    const result = await provider.analyzeImage(body.imageBase64, body.apiKey, body.model);
+    const result = await provider.analyzeImage(body.imageBase64, body.apiKey, body.model, body.foodDescription);
 
     return Response.json(result);
   } catch (error) {

@@ -13,5 +13,5 @@ export const AI_PROVIDER_LABELS: Record<AiProviderName, string> = {
 };
 
 export interface ProviderService {
-  analyzeImage(imageBase64: string, apiKey: string, model: string): Promise<AnalysisResult>;
+  analyzeImage(imageBase64: string, apiKey: string, model: string, foodDescription?: string): Promise<AnalysisResult>;
 }

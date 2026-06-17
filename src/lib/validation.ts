@@ -7,6 +7,7 @@ type AnalyzeInput = {
   provider: AiProviderName;
   model: string;
   apiKey: string;
+  foodDescription: string;
 };
 
 const MAX_TEXT_LENGTH = 500;
@@ -72,6 +73,7 @@ export function parseAnalyzeRequest(value: unknown): AnalyzeInput {
     provider,
     model: optionalText(value.model, "AI model", 160),
     apiKey: text(value.apiKey, "API key", 400),
+    foodDescription: optionalText(value.foodDescription, "Food description", 1_000),
   };
 }
 

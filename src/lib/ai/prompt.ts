@@ -74,3 +74,8 @@ Use these exact key names. The values above are examples — replace with actual
 
   user: "Analyze this food image using the nutritionist guidelines above.",
 } as const;
+
+export function buildUserPrompt(foodDescription?: string): string {
+  if (!foodDescription) return FOOD_ANALYSIS_PROMPTS.user;
+  return `${FOOD_ANALYSIS_PROMPTS.user}\n\nThe user provided this additional description: ${foodDescription}`;
+}
