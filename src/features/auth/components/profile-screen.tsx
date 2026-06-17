@@ -35,25 +35,34 @@ export function ProfileScreen({ user }: ProfileScreenProps) {
           <div>
             <h2 className="text-lg font-bold text-[var(--ink)]">Open Source</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--ink-muted)]">
-              Nutrio is built in the open. Fork it,{" "}
+              Nutrio is open source and built in public. Explore the{" "}
               <a
                 href="https://github.com/Fadhilamadan/nutrio"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[var(--primary)] underline underline-offset-2"
               >
-                self-host it
+                source code
               </a>
-              , or{" "}
+              ,{" "}
               <a
                 href="https://github.com/Fadhilamadan/nutrio"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[var(--primary)] underline underline-offset-2"
               >
-                jump in on GitHub
-              </a>{" "}
-              — contributions welcome.
+                self-host your own instance
+              </a>
+              , or help shape the project{" "}
+              <a
+                href="https://github.com/Fadhilamadan/nutrio"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--primary)] underline underline-offset-2"
+              >
+                on GitHub
+              </a>
+              . Pull requests welcome.
             </p>
           </div>
         </div>

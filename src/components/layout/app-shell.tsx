@@ -2,27 +2,27 @@
 
 import { lazy, Suspense, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Heart } from "lucide-react";
+import { Toaster } from "sonner";
 
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
 import { FloatingCameraButton } from "@/components/layout/floating-camera-button";
 import { NotificationPoller } from "@/components/layout/notification-poller";
 import { ScreenHeader } from "@/components/layout/screen-header";
+import { AppFooter } from "@/components/shared/app-footer";
 import { ErrorBoundary } from "@/components/shared/error-boundary";
 import { LoadingCard } from "@/components/shared/loading-card";
 import { NotionErrorCard } from "@/components/shared/notion-error-card";
 import { Button } from "@/components/ui/button";
 import { ErrorCard } from "@/components/ui/error-card";
-import { LoginScreen } from "@/features/auth/components/login-screen";
 import { useUser } from "@/features/auth/hooks/use-user";
 import { useTodayMeals } from "@/features/dashboard/hooks/use-today-meals";
 import { useHistoryMeals } from "@/features/history/hooks/use-history-meals";
+import { LandingPage } from "@/features/landing/components/landing-page";
 import { useSettings } from "@/features/settings/hooks/use-settings";
 import { useTargets } from "@/features/targets/hooks/use-targets";
 import { deleteMeal as deleteMealApi, saveMeal, updateMeal as updateMealApi } from "@/lib/api";
 import { dateKey } from "@/lib/date";
 import type { Meal, Screen } from "@/lib/types";
-import { version } from "../../../package.json";
 
 const gradientDecoration = (
   <div className="pointer-events-none absolute inset-x-0 top-0 h-52 bg-[radial-gradient(circle_at_20%_10%,rgba(98,174,240,0.18),transparent_32%),radial-gradient(circle_at_88%_22%,rgba(214,182,246,0.22),transparent_28%)]" />
@@ -100,7 +100,7 @@ export function AppShell() {
   }
 
   if (status === "unauthenticated") {
-    return <LoginScreen />;
+    return <LandingPage />;
   }
 
   if (authError) {
@@ -163,6 +163,7 @@ export function AppShell() {
 
   return (
     <div className="min-h-dvh bg-[var(--background)] text-[var(--foreground)] md:grid md:place-items-center md:p-6">
+      <Toaster />
       <NotificationPoller
         notificationsEnabled={Boolean(settings?.notifications)}
         reminderTime={targets?.reminderTime}
@@ -266,29 +267,7 @@ export function AppShell() {
               </AnimatePresence>
             ) : null}
           </div>
-          <div className="pb-2 pt-4 mt-6 text-center text-xs text-[var(--ink-faint)]">
-            <p className="flex items-center justify-center gap-1">
-              <Heart className="size-3 fill-current" />
-              <a
-                href="https://github.com/Fadhilamadan/nutrio"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2 transition-colors hover:text-[var(--ink-muted)]"
-              >
-                Nutrio
-              </a>
-              v{version}
-              <span aria-hidden="true">&middot;</span>
-              <a
-                href="https://creativecommons.org/licenses/by-nc-sa/4.0"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2 transition-colors hover:text-[var(--ink-muted)]"
-              >
-                CC BY-NC-SA 4.0
-              </a>
-            </p>
-          </div>
+          <AppFooter />
         </main>
         {screen !== "analyze" ? <FloatingCameraButton onClick={() => setScreen("analyze")} /> : null}
         <BottomNavigation active={screen} onNavigate={setScreen} />

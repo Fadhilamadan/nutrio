@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import type { Meal } from "@/lib/types";
 
 type HistoryEditFormProps = {
@@ -57,9 +59,12 @@ export function HistoryEditForm({ meal, onSave, onCancel }: HistoryEditFormProps
     startSaving(async () => {
       try {
         await onSave({ ...draft, editedByUser: true });
+        toast.success("Meal updated");
         onCancel();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to save meal edit.");
+        const msg = err instanceof Error ? err.message : "Failed to save meal edit.";
+        setError(msg);
+        toast.error(msg);
       }
     });
   }
@@ -139,16 +144,18 @@ export function HistoryEditForm({ meal, onSave, onCancel }: HistoryEditFormProps
       </div>
       <div className="space-y-2">
         <Label htmlFor="edit-serving">Serving estimate</Label>
-        <Input
+        <Textarea
           id="edit-serving"
+          rows={2}
           value={draft.servingEstimate}
           onChange={(event) => setDraft((prev) => ({ ...prev, servingEstimate: event.target.value }))}
         />
       </div>
       <div className="space-y-2">
         <Label htmlFor="edit-items">Food items</Label>
-        <Input
+        <Textarea
           id="edit-items"
+          rows={2}
           value={draft.items.join(", ")}
           onChange={(event) =>
             setDraft((prev) => ({
@@ -163,15 +170,16 @@ export function HistoryEditForm({ meal, onSave, onCancel }: HistoryEditFormProps
       </div>
       <div className="space-y-2">
         <Label htmlFor="edit-notes">Notes</Label>
-        <Input
+        <Textarea
           id="edit-notes"
+          rows={2}
           value={draft.notes}
           onChange={(event) => setDraft((prev) => ({ ...prev, notes: event.target.value }))}
         />
       </div>
       {error ? <p className="text-sm text-[var(--danger)]">{error}</p> : null}
       <div className="flex gap-2">
-        <Button type="button" onClick={saveEditingMeal} disabled={isSaving}>
+        <Button type="button" onClick={saveEditingMeal} disabled={isSaving || !isDirty}>
           {isSaving ? "Saving edit" : "Save edit"}
         </Button>
         <Button type="button" variant="secondary" onClick={onCancel}>

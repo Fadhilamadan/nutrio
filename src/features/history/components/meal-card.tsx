@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { displayMealTime } from "@/lib/date";
@@ -25,8 +26,11 @@ export function MealCard({ meal, onEdit, onDelete }: MealCardProps) {
       try {
         await onDelete(meal.id);
         setConfirmDelete(false);
+        toast.success("Meal archived");
       } catch (error) {
-        setDeleteError(error instanceof Error ? error.message : "Failed to archive meal.");
+        const msg = error instanceof Error ? error.message : "Failed to archive meal.";
+        setDeleteError(msg);
+        toast.error(msg);
       }
     });
   }

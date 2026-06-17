@@ -596,6 +596,22 @@ Receive Reminder
 
 # 14. Application Screens
 
+## Screen 0: Landing Page
+
+A marketing page shown to unauthenticated users before login.
+
+Features:
+
+- Hero section with value proposition ("AI macros for every plate")
+- "What is Nutrio" — explains the product (AI food photo analysis, Notion storage)
+- "Why it matters" — 3 pillars: awareness, effortlessness, privacy
+- "How it works" — 3-step flow: snap, analyze, save
+- CTA section with Google sign-in button
+
+The landing page is skipped for returning users with an active session.
+
+---
+
 ## Screen 1: Login
 
 Features:

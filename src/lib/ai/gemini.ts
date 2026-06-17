@@ -1,12 +1,17 @@
 import { AI_ANALYSIS_TEMPERATURE, AI_MAX_OUTPUT_TOKENS } from "@/lib/ai/constants";
 import { fetchWithTimeout } from "@/lib/ai/fetch";
 import { parseAnalysis } from "@/lib/ai/parse";
-import { FOOD_ANALYSIS_PROMPTS } from "@/lib/ai/prompt";
+import { buildUserPrompt, FOOD_ANALYSIS_PROMPTS } from "@/lib/ai/prompt";
 import type { ProviderService } from "@/lib/ai/types";
 import type { AnalysisResult } from "@/lib/types";
 
 export class GeminiService implements ProviderService {
-  async analyzeImage(imageBase64: string, apiKey: string, model: string): Promise<AnalysisResult> {
+  async analyzeImage(
+    imageBase64: string,
+    apiKey: string,
+    model: string,
+    foodDescription?: string,
+  ): Promise<AnalysisResult> {
     const effectiveModel = model || process.env.GEMINI_DEFAULT_MODEL || "gemini-2.5-flash";
 
     const base64Data = imageBase64.includes(",") ? imageBase64.split(",")[1] : imageBase64;
@@ -21,7 +26,7 @@ export class GeminiService implements ProviderService {
             {
               role: "user",
               parts: [
-                { text: `${FOOD_ANALYSIS_PROMPTS.system}\n\n${FOOD_ANALYSIS_PROMPTS.user}` },
+                { text: `${FOOD_ANALYSIS_PROMPTS.system}\n\n${buildUserPrompt(foodDescription)}` },
                 {
                   inlineData: {
                     mimeType: "image/webp",

@@ -4,6 +4,7 @@ import { type ChangeEvent, forwardRef, useImperativeHandle, useState } from "rea
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import type { AnalysisResult } from "@/lib/types";
 
 type AIAnalysisResultEditorProps = {
@@ -53,7 +54,7 @@ export const AIAnalysisResultEditor = forwardRef<AIAnalysisResultEditorHandle, A
       setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
     }
 
-    function updateItems(event: ChangeEvent<HTMLInputElement>) {
+    function updateItems(event: ChangeEvent<HTMLTextAreaElement>) {
       onChange({
         ...result,
         items: event.target.value
@@ -68,7 +69,7 @@ export const AIAnalysisResultEditor = forwardRef<AIAnalysisResultEditorHandle, A
         <div className="flex items-center gap-2">
           <div className="flex-1">
             <h2 className="text-lg font-bold text-[var(--ink)]">Editable AI result</h2>
-            <p className="text-sm text-[var(--ink-muted)]">Review before saving metadata to Notion.</p>
+            <p className="text-sm text-[var(--ink-muted)]">Accuracy depends on the AI model — review before saving.</p>
           </div>
           {isDirty ? (
             <span className="inline-flex animate-pulse items-center gap-1 rounded-full bg-[var(--warning)]/15 px-2.5 py-0.5 text-xs font-medium text-[var(--warning)]">
@@ -139,19 +140,25 @@ export const AIAnalysisResultEditor = forwardRef<AIAnalysisResultEditorHandle, A
         </div>
         <div className="mt-4 space-y-2">
           <Label htmlFor="serving">Serving estimate</Label>
-          <Input
+          <Textarea
             id="serving"
+            rows={2}
             value={result.servingEstimate}
             onChange={(event) => updateText("servingEstimate", event.target.value)}
           />
         </div>
         <div className="mt-4 space-y-2">
           <Label htmlFor="items">Food items</Label>
-          <Input id="items" value={result.items.join(", ")} onChange={updateItems} />
+          <Textarea id="items" rows={2} value={result.items.join(", ")} onChange={updateItems} />
         </div>
         <div className="mt-4 space-y-2">
           <Label htmlFor="notes">Notes</Label>
-          <Input id="notes" value={result.notes} onChange={(event) => updateText("notes", event.target.value)} />
+          <Textarea
+            id="notes"
+            rows={2}
+            value={result.notes}
+            onChange={(event) => updateText("notes", event.target.value)}
+          />
         </div>
       </section>
     );

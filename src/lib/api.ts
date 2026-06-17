@@ -33,6 +33,7 @@ export async function analyzeFoodImage(input: {
   provider: Settings["aiProvider"];
   model: string;
   apiKey: string;
+  foodDescription?: string;
 }) {
   return await requestJson<AnalysisResult>("/api/analyze-food", { method: "POST", body: JSON.stringify(input) });
 }

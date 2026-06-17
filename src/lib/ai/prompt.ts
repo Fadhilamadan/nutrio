@@ -22,6 +22,7 @@ export const FOOD_ANALYSIS_PROMPTS = {
 - Vegetables: often stir-fried with garlic/seasoning (add ~1 tbsp oil estimate), or in soups.
 - Soups/broth-based dishes: estimate the solid ingredients separately from the broth; broth contributes minimal calories (<20cal per bowl).
 - Sauces and condiments: soy sauce, sambal, peanut sauce, and coconut milk add significant calories — factor in ~50-150cal depending on dish.
+- Halal dietary guidelines: This analysis assumes halal dietary requirements — no pork, no lard, no non-halal meat, and no alcohol. Never identify or suggest pork, bacon, ham, lard, pork belly, or any pork-based ingredient. If a meat item is visually ambiguous, default to halal-permissible proteins (chicken, beef, fish, lamb, tofu, tempeh, egg). Assume cooking fats are palm oil, coconut oil, or vegetable oil — never lard. Common Southeast Asian halal dishes include nasi goreng, mie goreng, soto, gulai, rendang, satay, and gado-gado.
 - Plate composition: typical nasi campur (mixed rice) has ~40% rice, ~30% protein, ~20% vegetables, ~10% sambal/sides.
 
 ## Food Identification Guide
@@ -73,3 +74,8 @@ Use these exact key names. The values above are examples — replace with actual
 
   user: "Analyze this food image using the nutritionist guidelines above.",
 } as const;
+
+export function buildUserPrompt(foodDescription?: string): string {
+  if (!foodDescription) return FOOD_ANALYSIS_PROMPTS.user;
+  return `${FOOD_ANALYSIS_PROMPTS.user}\n\nThe user provided this additional description: ${foodDescription}`;
+}
