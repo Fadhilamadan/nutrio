@@ -47,9 +47,6 @@ export async function POST(request: Request) {
 
     const normalized = normalizeError(error);
 
-    return Response.json(
-      { error: normalized.message },
-      { status: error instanceof SyntaxError ? 400 : 500 },
-    );
+    return Response.json({ error: normalized.message }, { status: error instanceof SyntaxError ? 400 : 500 });
   }
 }
