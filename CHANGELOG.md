@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.3.0 (2026-06-17)
+
+
+### Features
+
+* AI JSON enforcement, settings redesign, and form validation improvements ([#1](https://github.com/Fadhilamadan/nutrio/issues/1)) ([fc2db00](https://github.com/Fadhilamadan/nutrio/commit/fc2db00bdd097cb6f4b564ceeca22363f4207e6e))
+* **ai:** add foodDescription plumbing through types, validation, and API ([052eae4](https://github.com/Fadhilamadan/nutrio/commit/052eae401420755cf53a8ec91368bc1b21211423))
+* **ai:** wire foodDescription through all five AI providers ([7268a99](https://github.com/Fadhilamadan/nutrio/commit/7268a9962e48af558c91be62e008cff669b510b3))
+* **analyze:** accuracy banner and sonner toasts ([bddbcd0](https://github.com/Fadhilamadan/nutrio/commit/bddbcd02b4b6c0e080449fb142512902a0d85bf5))
+* **analyze:** add API-key onboarding banner and secure localStorage cleanup ([#2](https://github.com/Fadhilamadan/nutrio/issues/2)) ([b457edb](https://github.com/Fadhilamadan/nutrio/commit/b457edb435d280161b2926ab03bafa93df67600d))
+* **analyze:** add optional food description textarea for advanced context ([22f2e9d](https://github.com/Fadhilamadan/nutrio/commit/22f2e9dff9c6297d013c460ba69e548eacbf347b))
+* **analyze:** textarea for serving/items/notes, accuracy text in result editor ([d0c471b](https://github.com/Fadhilamadan/nutrio/commit/d0c471bcde902f0bf434dda7c7005b882e5709bc))
+* **history:** sonner toast for archive and edit, dirty-disable save ([3823a59](https://github.com/Fadhilamadan/nutrio/commit/3823a599f1bc9b7cfbe9d8e5f35651f3b5c2b032))
+* **history:** textarea for serving estimate, food items, notes ([7b32963](https://github.com/Fadhilamadan/nutrio/commit/7b32963582e4906bb07cdf921eebcfa0eb8ce6e4))
+* initial app ([13b3741](https://github.com/Fadhilamadan/nutrio/commit/13b374114613ee39c2f9f0244bfb496b10bd2d2f))
+* **landing:** add marketing landing page before auth gate ([85f0c30](https://github.com/Fadhilamadan/nutrio/commit/85f0c308764bc995babaa1743ad22964587925e4))
+* **prompt:** add halal dietary guidelines to AI prompt ([21df223](https://github.com/Fadhilamadan/nutrio/commit/21df223e2fd0f1abd98a418c992cd144068b2571))
+* **settings:** sonner toast, dirty-disable save button ([b26d132](https://github.com/Fadhilamadan/nutrio/commit/b26d132924f51829d7bfdde72c0883fd2d9a8268))
+* **targets:** Martin Berkhan calculator, bodyfat input, save toast ([746f05d](https://github.com/Fadhilamadan/nutrio/commit/746f05dea54291d0160436534f75c4b31ed11a87))
+* **ui:** hide floating camera button on devices without a camera ([a9ad2ff](https://github.com/Fadhilamadan/nutrio/commit/a9ad2ffafd3f166d132d8f5b7af2ecb5c02eec65))
+
+
+### Bug Fixes
+
+* **analyze:** disable camera button on desktop, keep floating button visible ([e692d03](https://github.com/Fadhilamadan/nutrio/commit/e692d039687fef2f8d801e808fa80f3885e9a299))
+* **analyze:** normalize provider auth errors to a clear message ([fcac0df](https://github.com/Fadhilamadan/nutrio/commit/fcac0df936b8ed195297da563d4c8ed7955e0b86))
+* **auth:** stop clearing API keys on transient session flicker ([bc8f1ae](https://github.com/Fadhilamadan/nutrio/commit/bc8f1ae0c269ace63ef580adcbf5b038830049ca))
+* **profile:** cap avatar initials to first and last name ([e12a48b](https://github.com/Fadhilamadan/nutrio/commit/e12a48b8697ea2d4f8a86b613f3a7dfae9a14aeb))
+* **targets:** move split badge to calculator, simplify description ([4f6cc0e](https://github.com/Fadhilamadan/nutrio/commit/4f6cc0e5f37d310a02522454c6ff79d7f1edfecd))
+* **ui:** hide floating camera button on non-touch devices ([e4d6fc2](https://github.com/Fadhilamadan/nutrio/commit/e4d6fc29bb9672d84eba3bd3a7ee9a1b45c224de))
+
 ## 1.2.0 (2026-06-16)
 
 
