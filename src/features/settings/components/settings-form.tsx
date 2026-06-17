@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Bell, CheckCircle, ChevronDown, Palette, Smartphone, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -112,8 +113,11 @@ export function SettingsForm({
     setIsSaving(true);
     try {
       await onSave(draftSettings);
+      toast.success("Settings saved");
     } catch (error) {
-      setSaveError(error instanceof Error ? error.message : "Failed to save settings.");
+      const msg = error instanceof Error ? error.message : "Failed to save settings.";
+      setSaveError(msg);
+      toast.error(msg);
     } finally {
       setIsSaving(false);
     }
@@ -297,7 +301,7 @@ export function SettingsForm({
         type="button"
         className="w-full active:scale-[0.98] transition-transform duration-75"
         onClick={saveSettings}
-        disabled={isSaving}
+        disabled={isSaving || !isDirty}
       >
         {isSaving ? "Saving settings" : "Save settings"}
       </Button>
