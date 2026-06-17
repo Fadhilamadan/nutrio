@@ -17,7 +17,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Nutrio",
-  description: "AI food macro tracking with private transient image analysis.",
+  description:
+    "Snap a photo of your meal and get instant AI-powered nutrition analysis. Track calories, protein, carbs, and fat — no manual logging. Private by design.",
   manifest: "/manifest.json",
   icons: {
     icon: [
