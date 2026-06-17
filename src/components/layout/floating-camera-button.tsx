@@ -8,17 +8,13 @@ type FloatingCameraButtonProps = {
 };
 
 export function FloatingCameraButton({ onClick }: FloatingCameraButtonProps) {
-  const [hasCamera, setHasCamera] = useState(true);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
-    if (!navigator.mediaDevices?.enumerateDevices) return;
-    navigator.mediaDevices
-      .enumerateDevices()
-      .then((devices) => setHasCamera(devices.some((d) => d.kind === "videoinput")))
-      .catch(() => setHasCamera(false));
+    Promise.resolve().then(() => setIsTouchDevice(window.matchMedia("(pointer: coarse)").matches));
   }, []);
 
-  if (!hasCamera) return null;
+  if (!isTouchDevice) return null;
 
   return (
     <button
