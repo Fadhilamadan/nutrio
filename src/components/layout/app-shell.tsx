@@ -2,6 +2,7 @@
 
 import { lazy, Suspense, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Toaster } from "sonner";
 
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
 import { FloatingCameraButton } from "@/components/layout/floating-camera-button";
@@ -162,6 +163,7 @@ export function AppShell() {
 
   return (
     <div className="min-h-dvh bg-[var(--background)] text-[var(--foreground)] md:grid md:place-items-center md:p-6">
+      <Toaster />
       <NotificationPoller
         notificationsEnabled={Boolean(settings?.notifications)}
         reminderTime={targets?.reminderTime}

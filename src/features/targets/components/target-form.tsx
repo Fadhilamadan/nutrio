@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Calculator, ChevronDown, ChevronUp } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,6 +62,7 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
   const [weight, setWeight] = useState(70);
   const [activity, setActivity] = useState<Activity>("moderate");
   const [goal, setGoal] = useState<Goal>("maintain");
+  const [bodyFat, setBodyFat] = useState("");
 
   function updateNumber(field: keyof Omit<Targets, "reminderTime">, value: string) {
     setDraftTargets((currentTargets) => ({ ...currentTargets, [field]: Number(value) || 0 }));
@@ -71,8 +73,10 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
     const bmr =
       sex === "male" ? 10 * weight + 6.25 * height - 5 * age + 5 : 10 * weight + 6.25 * height - 5 * age - 161;
     const calories = Math.round((bmr * activityMultipliers[activity] * goalAdjustments[goal]) / 10) * 10;
-    const protein = Math.round(weight * 1.6);
-    const fat = Math.round((calories * 0.25) / 9);
+    const bf = bodyFat === "" ? undefined : Number(bodyFat);
+    const leanMass = bf && !isNaN(bf) && bf > 0 ? weight * (1 - bf / 100) : weight;
+    const protein = Math.round(leanMass * 2.0);
+    const fat = Math.round((calories * 0.35) / 9);
     const carbs = Math.max(Math.round((calories - protein * 4 - fat * 9) / 4), 0);
 
     setDraftTargets((currentTargets) => ({
@@ -101,19 +105,22 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
     startSave(async () => {
       try {
         await onSave(draftTargets);
+        toast.success("Targets saved");
       } catch (error) {
-        setSaveError(error instanceof Error ? error.message : "Failed to save targets.");
+        const msg = error instanceof Error ? error.message : "Failed to save targets.";
+        setSaveError(msg);
+        toast.error(msg);
       }
     });
   }
 
-  const isDirty =
-    targets !== null &&
-    (draftTargets.calories !== targets.calories ||
+  const isDirty = targets
+    ? draftTargets.calories !== targets.calories ||
       draftTargets.protein !== targets.protein ||
       draftTargets.carbs !== targets.carbs ||
       draftTargets.fat !== targets.fat ||
-      draftTargets.reminderTime !== targets.reminderTime);
+      draftTargets.reminderTime !== targets.reminderTime
+    : draftTargets.calories > 0 || draftTargets.protein > 0 || draftTargets.carbs > 0 || draftTargets.fat > 0;
 
   return (
     <form className="space-y-5">
@@ -129,7 +136,7 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
           <div className="flex-1">
             <h2 className="text-lg font-bold tracking-[-0.025em] text-[var(--ink)]">Calculate a starting target</h2>
             <p className="mt-1 text-sm leading-6 text-[var(--ink-muted)]">
-              Age, sex, height, weight, activity, and goal stay in this browser session only.
+              Martin Berkhan&apos;s formula. Body fat (optional) for precision. Session-only.
             </p>
           </div>
           {showCalculator ? (
@@ -187,6 +194,18 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
                     onChange={(event) => setWeight(Number(event.target.value) || 0)}
                   />
                 </div>
+                <div className="col-span-2 space-y-2">
+                  <Label htmlFor="tdee-bodyfat">
+                    Body fat % <span className="text-[var(--ink-muted)]">(optional)</span>
+                  </Label>
+                  <Input
+                    id="tdee-bodyfat"
+                    inputMode="decimal"
+                    value={bodyFat}
+                    onChange={(event) => setBodyFat(event.target.value)}
+                    placeholder="e.g. 15"
+                  />
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="tdee-activity">Activity</Label>
                   <Select value={activity} onValueChange={(value: Activity) => setActivity(value)}>
@@ -225,6 +244,7 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
               <Button type="button" className="mt-5 w-full" onClick={calculateTargets}>
                 Calculate target
               </Button>
+              <p className="mt-3 text-center text-xs text-[var(--ink-muted)]">30% protein · 35% fat · 35% carbs</p>
             </motion.div>
           ) : null}
         </AnimatePresence>
@@ -303,7 +323,7 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
           />
         </div>
         {saveError ? <p className="text-sm text-[var(--danger)]">{saveError}</p> : null}
-        <Button type="button" className="w-full" onClick={saveTargets} disabled={isSaving}>
+        <Button type="button" className="w-full" onClick={saveTargets} disabled={isSaving || !isDirty}>
           {isSaving ? "Saving targets" : "Save targets"}
         </Button>
       </section>
