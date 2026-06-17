@@ -3,11 +3,12 @@
 import { useRef, useState, useTransition } from "react";
 import imageCompression from "browser-image-compression";
 import { motion } from "framer-motion";
-import { KeyRound, LoaderCircle, Save, Settings as SettingsIcon } from "lucide-react";
+import { ChevronDown, ChevronRight, KeyRound, LoaderCircle, Save, Settings as SettingsIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { LoadingCard } from "@/components/shared/loading-card";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
   AIAnalysisResultEditor,
   type AIAnalysisResultEditorHandle,
@@ -40,6 +41,8 @@ export function AnalyzeFoodScreen({ user, settings, onSaveMeal, onNavigateToSett
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
   const [isSaving, setIsSaving] = useState(false);
+  const [showFoodDescription, setShowFoodDescription] = useState(false);
+  const [foodDescription, setFoodDescription] = useState("");
   const editorRef = useRef<AIAnalysisResultEditorHandle>(null);
 
   function selectImage(file: File | null) {
@@ -67,6 +70,7 @@ export function AnalyzeFoodScreen({ user, settings, onSaveMeal, onNavigateToSett
           provider: settings.aiProvider,
           model: settings.aiModel,
           apiKey: settings.apiKey,
+          foodDescription: foodDescription || undefined,
         });
         setResult(analysis);
         setOriginalResult(analysis);
@@ -126,6 +130,27 @@ export function AnalyzeFoodScreen({ user, settings, onSaveMeal, onNavigateToSett
       ) : (
         <>
           <ImageUploader imageName={imageName} onSelectImage={selectImage} />
+          {imageFile ? (
+            <div className="surface-card rounded-xl p-4">
+              <button
+                type="button"
+                onClick={() => setShowFoodDescription(!showFoodDescription)}
+                className="flex w-full items-center gap-2 text-sm font-medium text-[var(--ink-muted)]"
+              >
+                {showFoodDescription ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
+                Additional context <span className="text-xs">(optional)</span>
+              </button>
+              {showFoodDescription ? (
+                <Textarea
+                  value={foodDescription}
+                  onChange={(e) => setFoodDescription(e.target.value)}
+                  placeholder="Describe what's on your plate in any language — e.g. '100g rice, 200g roasted chicken, sambal', or 'nasi padang with ayam pop and sambal lado'"
+                  className="mt-3"
+                  rows={4}
+                />
+              ) : null}
+            </div>
+          ) : null}
           <Button className="w-full" size="lg" disabled={!imageName || isPending} onClick={runAnalysis}>
             {isPending ? <LoaderCircle className="size-5 animate-spin" /> : null}
             {isPending ? "AI scanning plate" : "Analyze food"}
