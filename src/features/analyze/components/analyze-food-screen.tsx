@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import imageCompression from "browser-image-compression";
 import { motion } from "framer-motion";
-import { AlertTriangle, KeyRound, LoaderCircle, Save, Settings as SettingsIcon } from "lucide-react";
+import { KeyRound, LoaderCircle, Save, Settings as SettingsIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { LoadingCard } from "@/components/shared/loading-card";
@@ -130,10 +130,6 @@ export function AnalyzeFoodScreen({ user, settings, onSaveMeal, onNavigateToSett
             {isPending ? <LoaderCircle className="size-5 animate-spin" /> : null}
             {isPending ? "AI scanning plate" : "Analyze food"}
           </Button>
-          <div className="flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
-            <AlertTriangle className="mt-0.5 size-4 shrink-0" />
-            <span>AI analysis results depend on the model and are estimates — always verify accuracy.</span>
-          </div>
           {error ? (
             <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm leading-6 text-red-900">{error}</div>
           ) : null}
