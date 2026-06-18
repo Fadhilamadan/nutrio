@@ -11,19 +11,11 @@ type SettingsScreenProps = {
   defaultModels: Record<AiProviderName, string> | null;
   canInstallPwa: boolean;
   onInstallPwa: () => void;
-  onRequestNotifications: () => void;
   onSave: (settings: Settings) => Promise<void> | void;
 };
 
-export function SettingsScreen({
-  settings,
-  defaultModels,
-  canInstallPwa,
-  onInstallPwa,
-  onRequestNotifications,
-  onSave,
-}: SettingsScreenProps) {
-  const formKey = `${settings.aiModel}:${settings.notifications}:${settings.pwaInstalled}:${settings.theme}`;
+export function SettingsScreen({ settings, defaultModels, canInstallPwa, onInstallPwa, onSave }: SettingsScreenProps) {
+  const formKey = `${settings.aiModel}:${settings.pwaInstalled}:${settings.theme}`;
 
   return (
     <motion.section
@@ -38,7 +30,6 @@ export function SettingsScreen({
         defaultModels={defaultModels}
         canInstallPwa={canInstallPwa}
         onInstallPwa={onInstallPwa}
-        onRequestNotifications={onRequestNotifications}
         onSave={onSave}
       />
     </motion.section>

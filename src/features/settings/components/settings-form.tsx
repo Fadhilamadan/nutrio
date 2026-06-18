@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, CheckCircle, ChevronDown, Palette, Smartphone, Sparkles } from "lucide-react";
+import { CheckCircle, ChevronDown, Palette, Smartphone, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import type { AiProviderName } from "@/lib/ai";
 import { AI_PROVIDER_LABELS, AI_PROVIDERS } from "@/lib/ai";
@@ -19,7 +18,6 @@ type SettingsFormProps = {
   defaultModels: Record<AiProviderName, string> | null;
   canInstallPwa: boolean;
   onInstallPwa: () => void;
-  onRequestNotifications: () => void;
   onSave: (settings: Settings) => Promise<void> | void;
 };
 
@@ -74,19 +72,11 @@ function CollapsibleGroup({
   );
 }
 
-export function SettingsForm({
-  settings,
-  defaultModels,
-  canInstallPwa,
-  onInstallPwa,
-  onRequestNotifications,
-  onSave,
-}: SettingsFormProps) {
+export function SettingsForm({ settings, defaultModels, canInstallPwa, onInstallPwa, onSave }: SettingsFormProps) {
   const [draftSettings, setDraftSettings] = useState(settings);
   const [saveError, setSaveError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["ai", "appearance", "notifications", "app"]));
-  const notificationPermission = typeof Notification === "undefined" ? "unsupported" : Notification.permission;
+  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["ai", "appearance", "app"]));
   const isIOS =
     /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   const isStandalone = "standalone" in navigator && navigator.standalone;
@@ -96,8 +86,7 @@ export function SettingsForm({
     draftSettings.aiProvider !== settings.aiProvider ||
     draftSettings.aiModel !== settings.aiModel ||
     draftSettings.apiKey !== settings.apiKey ||
-    draftSettings.theme !== settings.theme ||
-    draftSettings.notifications !== settings.notifications;
+    draftSettings.theme !== settings.theme;
 
   function toggleGroup(id: string) {
     setOpenGroups((prev) => {
@@ -232,41 +221,6 @@ export function SettingsForm({
                 <SelectItem value="Dark">Dark</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-        </CollapsibleGroup>
-
-        <CollapsibleGroup
-          id="notifications"
-          title="Notifications"
-          icon={<Bell className="size-4" />}
-          isOpen={openGroups.has("notifications")}
-          onToggle={() => toggleGroup("notifications")}
-        >
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-[var(--ink-muted)]">Daily reminders while Nutrio is open</p>
-              <Switch
-                aria-label="Enable daily macro reminders"
-                checked={draftSettings.notifications}
-                onCheckedChange={(checked) => setDraftSettings((current) => ({ ...current, notifications: checked }))}
-              />
-            </div>
-            {isIOS ? (
-              <p className="text-xs text-[var(--ink-muted)]">
-                Not supported on iOS. Enable on Android or desktop for daily reminders.
-              </p>
-            ) : (
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={onRequestNotifications}
-                disabled={notificationPermission === "unsupported"}
-              >
-                <Bell className="size-4" />
-                Permission: {notificationPermission}
-              </Button>
-            )}
           </div>
         </CollapsibleGroup>
 

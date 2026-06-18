@@ -6,7 +6,6 @@ import { Toaster } from "sonner";
 
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
 import { FloatingCameraButton } from "@/components/layout/floating-camera-button";
-import { NotificationPoller } from "@/components/layout/notification-poller";
 import { ScreenHeader } from "@/components/layout/screen-header";
 import { AppFooter } from "@/components/shared/app-footer";
 import { ErrorBoundary } from "@/components/shared/error-boundary";
@@ -75,16 +74,8 @@ export function AppShell() {
     removeHistoryMeal,
   } = useHistoryMeals(activeUser);
   const { targets, targetsError, saveTargets } = useTargets(activeUser);
-  const {
-    settings,
-    settingsError,
-    isLoadingSettings,
-    installPrompt,
-    defaultModels,
-    saveSettings,
-    installPwa,
-    requestNotifications,
-  } = useSettings(activeUser);
+  const { settings, settingsError, isLoadingSettings, installPrompt, defaultModels, saveSettings, installPwa } =
+    useSettings(activeUser);
 
   const [screen, setScreen] = useState<Screen>("dashboard");
 
@@ -163,12 +154,6 @@ export function AppShell() {
   return (
     <div className="min-h-dvh bg-[var(--background)] text-[var(--foreground)] md:grid md:place-items-center md:p-6">
       <Toaster />
-      <NotificationPoller
-        notificationsEnabled={Boolean(settings?.notifications)}
-        reminderTime={targets?.reminderTime}
-        meals={todayMeals}
-        targets={targets}
-      />
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -250,7 +235,6 @@ export function AppShell() {
                         defaultModels={defaultModels}
                         canInstallPwa={Boolean(installPrompt)}
                         onInstallPwa={installPwa}
-                        onRequestNotifications={requestNotifications}
                         onSave={saveSettings}
                       />
                     </ErrorBoundary>

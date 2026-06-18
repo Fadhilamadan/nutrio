@@ -5,8 +5,6 @@ import type { Targets } from "@/lib/types";
 
 type TargetRecord = Targets & { id: string; userId: string; updatedAt: string };
 
-const fallbackTargets: Targets = { calories: 2000, protein: 140, carbs: 220, fat: 65, reminderTime: "19:30" };
-
 function toTargets(page: NotionPage): TargetRecord {
   const properties = page.properties;
 
@@ -17,7 +15,6 @@ function toTargets(page: NotionPage): TargetRecord {
     protein: number(properties, "DailyProtein"),
     carbs: number(properties, "DailyCarbs"),
     fat: number(properties, "DailyFat"),
-    reminderTime: richText(properties, "ReminderTime") || fallbackTargets.reminderTime,
     updatedAt: date(properties, "UpdatedAt"),
   };
 }
@@ -30,7 +27,6 @@ function targetProperties(userId: string, targets: Targets) {
     DailyProtein: { number: targets.protein },
     DailyCarbs: { number: targets.carbs },
     DailyFat: { number: targets.fat },
-    ReminderTime: textProperty(targets.reminderTime),
     UpdatedAt: { date: { start: new Date().toISOString() } },
   };
 }

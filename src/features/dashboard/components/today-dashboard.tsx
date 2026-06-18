@@ -54,8 +54,8 @@ export function TodayDashboard({ user, meals, targets, onConfigureTargets }: Tod
                 protein left
               </div>
               <div className="rounded-xl bg-[var(--surface-soft)] p-3">
-                <p className="text-lg font-bold text-[var(--ink)]">{targets.reminderTime}</p>
-                reminder
+                <p className="text-lg font-bold text-[var(--ink)]">{todayMeals.length}</p>
+                meals today
               </div>
             </div>
           </>

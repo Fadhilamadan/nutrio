@@ -12,7 +12,6 @@ type AnalyzeInput = {
 
 const MAX_TEXT_LENGTH = 500;
 const MAX_IMAGE_DATA_URL_LENGTH = 8_000_000;
-const TIME_FORMAT_REGEX = /^\d{2}:\d{2}$/;
 
 export class ValidationError extends Error {
   status = 400;
@@ -100,15 +99,11 @@ export function parseMealRequest(value: unknown): Omit<Meal, "id" | "time"> {
 export function parseTargetsRequest(value: unknown): Targets {
   if (!isRecord(value)) throw new ValidationError("Targets must be an object.");
 
-  const reminderTime = text(value.reminderTime, "Reminder time", 5);
-  if (!TIME_FORMAT_REGEX.test(reminderTime)) throw new ValidationError("Reminder time must use HH:mm format.");
-
   return {
     calories: finiteNumber(value.calories, "Daily calories"),
     protein: finiteNumber(value.protein, "Daily protein"),
     carbs: finiteNumber(value.carbs, "Daily carbs"),
     fat: finiteNumber(value.fat, "Daily fat"),
-    reminderTime,
   };
 }
 

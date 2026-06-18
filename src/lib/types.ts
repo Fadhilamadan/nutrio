@@ -13,7 +13,6 @@ export type Targets = {
   protein: number;
   carbs: number;
   fat: number;
-  reminderTime: string;
 };
 
 export type Meal = {

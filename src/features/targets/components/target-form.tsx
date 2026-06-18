@@ -20,7 +20,7 @@ type Sex = "male" | "female";
 type Activity = "sedentary" | "light" | "moderate" | "active" | "very-active";
 type Goal = "lose" | "maintain" | "gain";
 
-const emptyTargets: Targets = { calories: 0, protein: 0, carbs: 0, fat: 0, reminderTime: "19:30" };
+const emptyTargets: Targets = { calories: 0, protein: 0, carbs: 0, fat: 0 };
 
 const activityDetails: Record<Activity, { label: string; description: string }> = {
   sedentary: { label: "Sedentary", description: "Desk job, little to no exercise" },
@@ -64,7 +64,7 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
   const [goal, setGoal] = useState<Goal>("gain");
   const [bodyFat, setBodyFat] = useState("");
 
-  function updateNumber(field: keyof Omit<Targets, "reminderTime">, value: string) {
+  function updateNumber(field: keyof Targets, value: string) {
     setDraftTargets((currentTargets) => ({ ...currentTargets, [field]: Number(value) || 0 }));
     setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
   }
@@ -79,12 +79,11 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
     const fat = Math.round((calories * 0.35) / 9);
     const carbs = Math.max(Math.round((calories - protein * 4 - fat * 9) / 4), 0);
 
-    setDraftTargets((currentTargets) => ({
+    setDraftTargets(() => ({
       calories,
       protein,
       carbs,
       fat,
-      reminderTime: currentTargets.reminderTime || "19:30",
     }));
     setFieldErrors({});
     setShowCalculator(false);
@@ -118,8 +117,7 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
     ? draftTargets.calories !== targets.calories ||
       draftTargets.protein !== targets.protein ||
       draftTargets.carbs !== targets.carbs ||
-      draftTargets.fat !== targets.fat ||
-      draftTargets.reminderTime !== targets.reminderTime
+      draftTargets.fat !== targets.fat
     : draftTargets.calories > 0 || draftTargets.protein > 0 || draftTargets.carbs > 0 || draftTargets.fat > 0;
 
   return (
@@ -309,18 +307,6 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
             />
             {fieldErrors.fat ? <p className="text-xs text-[var(--danger)]">{fieldErrors.fat}</p> : null}
           </div>
-        </div>
-        <div className="space-y-2 overflow-hidden">
-          <Label htmlFor="reminder">Reminder time</Label>
-          <Input
-            id="reminder"
-            type="time"
-            className="min-w-0"
-            value={draftTargets.reminderTime}
-            onChange={(event) =>
-              setDraftTargets((currentTargets) => ({ ...currentTargets, reminderTime: event.target.value }))
-            }
-          />
         </div>
         {saveError ? <p className="text-sm text-[var(--danger)]">{saveError}</p> : null}
         <Button type="button" className="w-full" onClick={saveTargets} disabled={isSaving || !isDirty}>

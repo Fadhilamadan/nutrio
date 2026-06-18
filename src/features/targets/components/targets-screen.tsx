@@ -11,9 +11,7 @@ type TargetsScreenProps = {
 };
 
 export function TargetsScreen({ targets, onSave }: TargetsScreenProps) {
-  const formKey = targets
-    ? `${targets.calories}:${targets.protein}:${targets.carbs}:${targets.fat}:${targets.reminderTime}`
-    : "empty-targets";
+  const formKey = targets ? `${targets.calories}:${targets.protein}:${targets.carbs}:${targets.fat}` : "empty-targets";
 
   return (
     <motion.section

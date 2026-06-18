@@ -41,7 +41,6 @@ The MVP should allow users to:
 - Track calories and macros
 - View historical meals
 - Configure nutrition targets
-- Receive reminders
 - Manage personal AI provider settings
 
 ---
@@ -62,7 +61,6 @@ Each user should have independent:
 - History
 - Targets
 - Settings
-- Notifications
 
 ---
 
@@ -122,16 +120,10 @@ without the complexity of traditional calorie-counting applications.
 - Daily fat target
 - Metric TDEE calculator for suggested targets
 
-### Notifications
-
-- Daily reminders
-- Nutrition progress reminders
-
 ### Settings
 
 - AI provider & model selection (e.g., Gemini, Groq, OpenRouter, Hugging Face, Mistral)
 - Dynamic API key management
-- Notification settings
 - Theme preference
 
 ### PWA Support
@@ -394,7 +386,6 @@ Store nutrition goals.
 | DailyProtein  | Number |
 | DailyCarbs    | Number |
 | DailyFat      | Number |
-| ReminderTime  | Text   |
 | UpdatedAt     | Date   |
 
 ---
@@ -407,16 +398,15 @@ Store application preferences.
 
 ### Fields
 
-| Property            | Type     |
-| ------------------- | -------- |
-| Name                | Title    |
-| UserID              | Text     |
-| AIProvider          | Select   |
-| AIModel             | Text     |
-| HasAPIKey           | Checkbox |
-| NotificationEnabled | Checkbox |
-| PWAInstalled        | Checkbox |
-| Theme               | Select   |
+| Property     | Type     |
+| ------------ | -------- |
+| Name         | Title    |
+| UserID       | Text     |
+| AIProvider   | Select   |
+| AIModel      | Text     |
+| HasAPIKey    | Checkbox |
+| PWAInstalled | Checkbox |
+| Theme        | Select   |
 
 ---
 
@@ -588,8 +578,6 @@ View Progress
 Log Meals
     ↓
 Review History
-    ↓
-Receive Reminder
 ```
 
 ---
@@ -699,9 +687,7 @@ Features:
 - Carb target
 - Fat target
 - Metric TDEE calculator
-- Reminder time
-
-Target calculator inputs:
+- Target calculator inputs:
 
 - Age
 - Sex
@@ -721,7 +707,6 @@ Features:
 - OpenRouter model
 - AI Model
 - API Key
-- Notifications
 - PWA Settings
 
 ---
@@ -736,38 +721,7 @@ Features:
 
 ---
 
-# 15. Notifications
-
-## MVP Notifications
-
-Support:
-
-- Browser notifications
-- PWA notifications
-
-Examples:
-
-```txt
-Did you log your lunch?
-```
-
-```txt
-You still need 25g of protein today.
-```
-
----
-
-## Requirement
-
-Users must be able to:
-
-- Enable notifications
-- Disable notifications
-- Configure reminder time
-
----
-
-# 16. UI / UX Direction
+# 15. UI / UX Direction
 
 ## Design Principles
 
@@ -806,7 +760,7 @@ Use Framer Motion for:
 
 ---
 
-# 17. MVP Success Criteria
+# 16. MVP Success Criteria
 
 The MVP is successful when:
 
@@ -817,5 +771,4 @@ The MVP is successful when:
 - Meals are saved to Notion
 - Daily progress is calculated correctly
 - Targets are configurable
-- Notifications work
 - The app functions smoothly as an iPhone PWA

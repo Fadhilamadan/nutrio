@@ -29,15 +29,3 @@ self.addEventListener("fetch", (event) => {
     fetch(event.request).catch(() => caches.match(event.request).then((response) => response || caches.match("/"))),
   );
 });
-
-self.addEventListener("push", (event) => {
-  const data = event.data?.json() ?? { title: "Nutrio reminder", body: "Time to log your meals!" };
-  event.waitUntil(
-    self.registration.showNotification(data.title, {
-      body: data.body,
-      icon: "/favicon/android-chrome-192x192.png",
-      badge: "/favicon/android-chrome-192x192.png",
-      vibrate: [200, 100, 200],
-    }),
-  );
-});
