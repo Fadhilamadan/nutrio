@@ -319,9 +319,6 @@ export function LandingPage() {
         className="border-t border-[var(--hairline)] px-5 py-24"
       >
         <div className="mx-auto max-w-[700px]">
-          <p className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ink-faint)]">
-            FAQ
-          </p>
           <h2 className="text-center text-3xl font-black tracking-[-0.03em] md:text-4xl">
             Frequently asked questions.
           </h2>
