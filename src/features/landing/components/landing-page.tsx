@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { signIn } from "next-auth/react";
-import { AnimatePresence, motion, type Transition } from "framer-motion";
+import { motion, type Transition } from "framer-motion";
 import { ArrowDown, BarChart3, Camera, ChevronDown, History, ShieldCheck, Sparkles, Target } from "lucide-react";
 
 import { AppFooter } from "@/components/shared/app-footer";
@@ -41,13 +41,11 @@ const faqItems = [
   },
   {
     question: "Is my data private?",
-    answer:
-      "Yes \u2014 images never stored, only macro metadata is saved \u2014 nothing shared.",
+    answer: "Yes \u2014 images never stored, only macro metadata is saved \u2014 nothing shared.",
   },
   {
     question: "What happens to my food photos?",
-    answer:
-      "Processed temporarily for AI analysis, immediately discarded. Nothing is saved.",
+    answer: "Processed temporarily for AI analysis, immediately discarded. Nothing is saved.",
   },
   {
     question: "Can I self-host Nutrio?",
@@ -60,8 +58,7 @@ const faqItems = [
   },
   {
     question: "Which AI providers are supported?",
-    answer:
-      "Gemini, Groq, OpenRouter, HuggingFace, and Mistral \u2014 configure your preference in settings.",
+    answer: "Gemini, Groq, OpenRouter, HuggingFace, and Mistral \u2014 configure your preference in settings.",
   },
 ];
 
@@ -354,9 +351,7 @@ export function LandingPage() {
                   transition={{ duration: 0.3, ease }}
                   className="overflow-hidden"
                 >
-                  <p className="px-5 pb-5 text-sm leading-6 text-[var(--ink-muted)]">
-                    {item.answer}
-                  </p>
+                  <p className="px-5 pb-5 text-sm leading-6 text-[var(--ink-muted)]">{item.answer}</p>
                 </motion.div>
               </div>
             ))}
