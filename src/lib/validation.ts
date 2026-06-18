@@ -1,6 +1,9 @@
+import { ZodError } from "zod";
+
 import type { AiProviderName } from "@/lib/ai";
 import { AI_PROVIDERS } from "@/lib/ai";
-import type { Meal, Settings, Targets } from "@/lib/types";
+import { mealRequestSchema, targetsSchema } from "@/lib/schemas";
+import type { Meal, Settings } from "@/lib/types";
 
 type AnalyzeInput = {
   imageBase64: string;
@@ -33,23 +36,9 @@ function optionalText(value: unknown, name: string, maxLength = MAX_TEXT_LENGTH)
   return text(value, name, maxLength);
 }
 
-function finiteNumber(value: unknown, name: string) {
-  const number = typeof value === "number" ? value : Number(value);
-  if (!Number.isFinite(number) || number < 0) throw new ValidationError(`${name} must be a positive number.`);
-  return number;
-}
-
 function booleanValue(value: unknown, name: string) {
   if (typeof value !== "boolean") throw new ValidationError(`${name} must be true or false.`);
   return value;
-}
-
-function stringList(value: unknown, name: string) {
-  if (!Array.isArray(value)) throw new ValidationError(`${name} must be a list.`);
-  return value
-    .map((item) => text(item, name, 120))
-    .filter(Boolean)
-    .slice(0, 25);
 }
 
 function validateProvider(provider: string): AiProviderName {
@@ -57,6 +46,15 @@ function validateProvider(provider: string): AiProviderName {
     throw new ValidationError(`AI provider must be one of: ${AI_PROVIDERS.join(", ")}.`);
   }
   return provider as AiProviderName;
+}
+
+function formatZodError(error: ZodError): string {
+  return error.issues
+    .map((issue) => {
+      const path = issue.path.length ? `${issue.path.join(".")}: ` : "";
+      return `${path}${issue.message}`;
+    })
+    .join("; ");
 }
 
 export function parseAnalyzeRequest(value: unknown): AnalyzeInput {
@@ -79,32 +77,27 @@ export function parseAnalyzeRequest(value: unknown): AnalyzeInput {
 export function parseMealRequest(value: unknown): Omit<Meal, "id" | "time"> {
   if (!isRecord(value)) throw new ValidationError("Meal must be an object.");
 
-  return {
-    userId: "",
-    name: text(value.name, "Meal name", 160),
-    date: text(value.date, "Meal date", 80),
-    calories: finiteNumber(value.calories, "Calories"),
-    protein: finiteNumber(value.protein, "Protein"),
-    carbs: finiteNumber(value.carbs, "Carbs"),
-    fat: finiteNumber(value.fat, "Fat"),
-    servingEstimate: optionalText(value.servingEstimate, "Serving estimate", 240),
-    items: stringList(value.items, "Food items"),
-    confidence: Math.min(finiteNumber(value.confidence, "Confidence"), 1),
-    notes: optionalText(value.notes, "Notes", 1_000),
-    aiProvider: optionalText(value.aiProvider, "AI provider", 80) || "OpenRouter",
-    editedByUser: booleanValue(value.editedByUser, "Edited by user"),
-  };
+  try {
+    return mealRequestSchema.parse(value) as Omit<Meal, "id" | "time">;
+  } catch (error) {
+    if (error instanceof ZodError) {
+      throw new ValidationError(formatZodError(error));
+    }
+    throw error;
+  }
 }
 
-export function parseTargetsRequest(value: unknown): Targets {
+export function parseTargetsRequest(value: unknown) {
   if (!isRecord(value)) throw new ValidationError("Targets must be an object.");
 
-  return {
-    calories: finiteNumber(value.calories, "Daily calories"),
-    protein: finiteNumber(value.protein, "Daily protein"),
-    carbs: finiteNumber(value.carbs, "Daily carbs"),
-    fat: finiteNumber(value.fat, "Daily fat"),
-  };
+  try {
+    return targetsSchema.parse(value);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      throw new ValidationError(formatZodError(error));
+    }
+    throw error;
+  }
 }
 
 export function parseSettingsRequest(value: unknown): Settings {

@@ -35,10 +35,10 @@ export const AIAnalysisResultEditor = forwardRef<AIAnalysisResultEditorHandle, A
       validate() {
         const errors: Partial<Record<keyof AnalysisResult, string>> = {};
         if (!result.name.trim()) errors.name = "Meal name is required";
-        if (!result.calories || result.calories <= 0) errors.calories = "Must be greater than 0";
-        if (!result.protein || result.protein <= 0) errors.protein = "Must be greater than 0";
-        if (!result.carbs || result.carbs <= 0) errors.carbs = "Must be greater than 0";
-        if (!result.fat || result.fat <= 0) errors.fat = "Must be greater than 0";
+        if (result.calories < 0) errors.calories = "Must not be negative";
+        if (result.protein < 0) errors.protein = "Must not be negative";
+        if (result.carbs < 0) errors.carbs = "Must not be negative";
+        if (result.fat < 0) errors.fat = "Must not be negative";
         setFieldErrors(errors);
         return Object.keys(errors).length === 0;
       },

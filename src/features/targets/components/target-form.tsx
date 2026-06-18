@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ageSchema, bodyFatSchema, heightSchema, weightSchema } from "@/lib/schemas";
 import type { Targets } from "@/lib/types";
 
 type TargetFormProps = {
@@ -55,6 +56,7 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
   const [saveError, setSaveError] = useState("");
   const [isSaving, startSave] = useTransition();
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof Targets, string>>>({});
+  const [calculatorErrors, setCalculatorErrors] = useState<Partial<Record<string, string>>>({});
   const [showCalculator, setShowCalculator] = useState(!targets);
   const [age, setAge] = useState(31);
   const [sex, setSex] = useState<Sex>("male");
@@ -65,11 +67,25 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
   const [bodyFat, setBodyFat] = useState("");
 
   function updateNumber(field: keyof Targets, value: string) {
-    setDraftTargets((currentTargets) => ({ ...currentTargets, [field]: Number(value) || 0 }));
+    setDraftTargets((currentTargets) => ({ ...currentTargets, [field]: value === "" ? 0 : Number(value) }));
     setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
   }
 
   function calculateTargets() {
+    const errors: Partial<Record<string, string>> = {};
+    const ageResult = ageSchema.safeParse(age);
+    if (!ageResult.success) errors.age = ageResult.error.issues[0].message;
+    const heightResult = heightSchema.safeParse(height);
+    if (!heightResult.success) errors.height = heightResult.error.issues[0].message;
+    const weightResult = weightSchema.safeParse(weight);
+    if (!weightResult.success) errors.weight = weightResult.error.issues[0].message;
+    if (bodyFat !== "") {
+      const bfResult = bodyFatSchema.safeParse(bodyFat);
+      if (!bfResult.success) errors.bodyFat = bfResult.error.issues[0].message;
+    }
+    setCalculatorErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
     const bmr =
       sex === "male" ? 10 * weight + 6.25 * height - 5 * age + 5 : 10 * weight + 6.25 * height - 5 * age - 161;
     const calories = Math.round((bmr * activityMultipliers[activity] * goalAdjustments[goal]) / 10) * 10;
@@ -93,10 +109,10 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
     setSaveError("");
 
     const errors: Partial<Record<keyof Targets, string>> = {};
-    if (!draftTargets.calories || draftTargets.calories <= 0) errors.calories = "Must be greater than 0";
-    if (!draftTargets.protein || draftTargets.protein <= 0) errors.protein = "Must be greater than 0";
-    if (!draftTargets.carbs || draftTargets.carbs <= 0) errors.carbs = "Must be greater than 0";
-    if (!draftTargets.fat || draftTargets.fat <= 0) errors.fat = "Must be greater than 0";
+    if (draftTargets.calories < 0) errors.calories = "Must not be negative";
+    if (draftTargets.protein < 0) errors.protein = "Must not be negative";
+    if (draftTargets.carbs < 0) errors.carbs = "Must not be negative";
+    if (draftTargets.fat < 0) errors.fat = "Must not be negative";
 
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
@@ -158,9 +174,14 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
                   <Input
                     id="tdee-age"
                     inputMode="numeric"
+                    className={calculatorErrors.age ? "border-[var(--danger)]" : undefined}
                     value={age}
-                    onChange={(event) => setAge(Number(event.target.value) || 0)}
+                    onChange={(event) => {
+                      setAge(Number(event.target.value) || 0);
+                      setCalculatorErrors((prev) => ({ ...prev, age: undefined }));
+                    }}
                   />
+                  {calculatorErrors.age ? <p className="text-xs text-[var(--danger)]">{calculatorErrors.age}</p> : null}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="tdee-sex">Sex</Label>
@@ -179,18 +200,32 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
                   <Input
                     id="tdee-height"
                     inputMode="numeric"
+                    className={calculatorErrors.height ? "border-[var(--danger)]" : undefined}
                     value={height}
-                    onChange={(event) => setHeight(Number(event.target.value) || 0)}
+                    onChange={(event) => {
+                      setHeight(Number(event.target.value) || 0);
+                      setCalculatorErrors((prev) => ({ ...prev, height: undefined }));
+                    }}
                   />
+                  {calculatorErrors.height ? (
+                    <p className="text-xs text-[var(--danger)]">{calculatorErrors.height}</p>
+                  ) : null}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="tdee-weight">Weight, kg</Label>
                   <Input
                     id="tdee-weight"
                     inputMode="decimal"
+                    className={calculatorErrors.weight ? "border-[var(--danger)]" : undefined}
                     value={weight}
-                    onChange={(event) => setWeight(Number(event.target.value) || 0)}
+                    onChange={(event) => {
+                      setWeight(Number(event.target.value) || 0);
+                      setCalculatorErrors((prev) => ({ ...prev, weight: undefined }));
+                    }}
                   />
+                  {calculatorErrors.weight ? (
+                    <p className="text-xs text-[var(--danger)]">{calculatorErrors.weight}</p>
+                  ) : null}
                 </div>
                 <div className="col-span-2 space-y-2">
                   <Label htmlFor="tdee-bodyfat">
@@ -199,10 +234,17 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
                   <Input
                     id="tdee-bodyfat"
                     inputMode="decimal"
+                    className={calculatorErrors.bodyFat ? "border-[var(--danger)]" : undefined}
                     value={bodyFat}
-                    onChange={(event) => setBodyFat(event.target.value)}
+                    onChange={(event) => {
+                      setBodyFat(event.target.value);
+                      setCalculatorErrors((prev) => ({ ...prev, bodyFat: undefined }));
+                    }}
                     placeholder="e.g. 15"
                   />
+                  {calculatorErrors.bodyFat ? (
+                    <p className="text-xs text-[var(--danger)]">{calculatorErrors.bodyFat}</p>
+                  ) : null}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="tdee-activity">Activity</Label>
@@ -269,7 +311,7 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
               id="target-calories"
               inputMode="numeric"
               className={fieldErrors.calories ? "border-[var(--danger)]" : undefined}
-              value={draftTargets.calories || ""}
+              value={String(draftTargets.calories)}
               onChange={(event) => updateNumber("calories", event.target.value)}
             />
             {fieldErrors.calories ? <p className="text-xs text-[var(--danger)]">{fieldErrors.calories}</p> : null}
@@ -280,7 +322,7 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
               id="target-protein"
               inputMode="numeric"
               className={fieldErrors.protein ? "border-[var(--danger)]" : undefined}
-              value={draftTargets.protein || ""}
+              value={String(draftTargets.protein)}
               onChange={(event) => updateNumber("protein", event.target.value)}
             />
             {fieldErrors.protein ? <p className="text-xs text-[var(--danger)]">{fieldErrors.protein}</p> : null}
@@ -291,7 +333,7 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
               id="target-carbs"
               inputMode="numeric"
               className={fieldErrors.carbs ? "border-[var(--danger)]" : undefined}
-              value={draftTargets.carbs || ""}
+              value={String(draftTargets.carbs)}
               onChange={(event) => updateNumber("carbs", event.target.value)}
             />
             {fieldErrors.carbs ? <p className="text-xs text-[var(--danger)]">{fieldErrors.carbs}</p> : null}
@@ -302,7 +344,7 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
               id="target-fat"
               inputMode="numeric"
               className={fieldErrors.fat ? "border-[var(--danger)]" : undefined}
-              value={draftTargets.fat || ""}
+              value={String(draftTargets.fat)}
               onChange={(event) => updateNumber("fat", event.target.value)}
             />
             {fieldErrors.fat ? <p className="text-xs text-[var(--danger)]">{fieldErrors.fat}</p> : null}
