@@ -44,7 +44,7 @@ export function TodayDashboard({ user, meals, targets, onConfigureTargets }: Tod
             <div className="flex justify-center">
               <MacroProgressRing value={totals.calories} target={targets.calories} label="Calories" />
             </div>
-            <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs text-[var(--ink-muted)]">
+            <div className="mt-3 grid grid-cols-2 gap-2 text-center text-xs text-[var(--ink-muted)]">
               <div className="rounded-xl bg-[var(--surface-soft)] p-3">
                 <p className="text-lg font-bold text-[var(--ink)]">{Math.max(targets.calories - totals.calories, 0)}</p>
                 kcal left
@@ -52,10 +52,6 @@ export function TodayDashboard({ user, meals, targets, onConfigureTargets }: Tod
               <div className="rounded-xl bg-[var(--surface-soft)] p-3">
                 <p className="text-lg font-bold text-[var(--ink)]">{Math.max(targets.protein - totals.protein, 0)}g</p>
                 protein left
-              </div>
-              <div className="rounded-xl bg-[var(--surface-soft)] p-3">
-                <p className="text-lg font-bold text-[var(--ink)]">{todayMeals.length}</p>
-                meals today
               </div>
             </div>
           </>
