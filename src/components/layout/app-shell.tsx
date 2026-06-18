@@ -1,7 +1,7 @@
 "use client";
 
 import { lazy, Suspense, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Toaster } from "sonner";
 
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
@@ -59,6 +59,7 @@ const headerCopy: Record<Screen, { eyebrow: string; title: string }> = {
 };
 
 export function AppShell() {
+  const shouldReduceMotion = useReducedMotion();
   const { activeUser, authError, status } = useUser();
   const { todayMeals, todayError, prependTodayMeal, updateTodayMeal, removeTodayMeal } = useTodayMeals(activeUser);
   const {
@@ -147,8 +148,8 @@ export function AppShell() {
     <div className="min-h-dvh bg-[var(--background)] text-[var(--foreground)] md:grid md:place-items-center md:p-6">
       <Toaster />
       <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.98 }}
+        animate={shouldReduceMotion ? false : { opacity: 1, scale: 1 }}
         className="relative mx-auto flex h-dvh w-full max-w-[430px] flex-col overflow-hidden bg-[var(--background)] shadow-[var(--shadow-elevated)] md:h-[min(920px,calc(100dvh-3rem))] md:rounded-[2rem]"
       >
         {gradientDecoration}
