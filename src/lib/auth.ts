@@ -4,6 +4,8 @@ import GoogleProvider from "next-auth/providers/google";
 
 import { upsertUserFromAuth } from "@/lib/notion/users";
 
+const secure = process.env.NODE_ENV === "production";
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -12,13 +14,44 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   secret: process.env.AUTH_SECRET,
-  useSecureCookies: process.env.NODE_ENV === "production",
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure,
+      },
+    },
+  },
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
   },
   pages: {
     signIn: "/",
+  },
+  callbacks: {
+    async jwt({ token, trigger }) {
+      if (trigger === "signIn") {
+        token.iat = Date.now();
+      }
+      token.lastActivity = Date.now();
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        (session.user as Record<string, unknown>).iat = token.iat;
+        (session.user as Record<string, unknown>).lastActivity = token.lastActivity;
+      }
+      return session;
+    },
+  },
+  events: {
+    async signOut({ token: _token }) {
+      // Token is invalidated on sign-out; hook reserved for future audit logging.
+    },
   },
 };
 

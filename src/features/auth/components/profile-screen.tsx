@@ -71,7 +71,7 @@ export function ProfileScreen({ user }: ProfileScreenProps) {
         className="w-full"
         onClick={() => {
           clearNutrioApiKeys();
-          signOut();
+          signOut({ callbackUrl: "/" });
         }}
       >
         <LogOut className="size-4" />
