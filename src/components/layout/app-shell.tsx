@@ -11,7 +11,6 @@ import { ScreenHeader } from "@/components/layout/screen-header";
 import { AppFooter } from "@/components/shared/app-footer";
 import { ErrorBoundary } from "@/components/shared/error-boundary";
 import { LoadingCard } from "@/components/shared/loading-card";
-import { NotionErrorCard } from "@/components/shared/notion-error-card";
 import { Button } from "@/components/ui/button";
 import { ErrorCard } from "@/components/ui/error-card";
 import { useUser } from "@/features/auth/hooks/use-user";
@@ -115,7 +114,7 @@ export function AppShell() {
     return (
       <div className="grid min-h-dvh place-items-center bg-[var(--background)] p-5 text-[var(--foreground)]">
         <div className="w-full max-w-[360px]">
-          <LoadingCard title="Connecting profile" message="Matching your Google account to a Notion user record." />
+          <LoadingCard title="Connecting profile" message="Matching your Google account to your user record." />
         </div>
       </div>
     );
@@ -189,9 +188,9 @@ export function AppShell() {
             }
           />
           <div className="mt-6 space-y-5">
-            {dataError ? <NotionErrorCard message={dataError} onRetry={() => window.location.reload()} /> : null}
+            {dataError ? <ErrorCard message={dataError} onRetry={() => window.location.reload()} /> : null}
             {isLoadingData ? (
-              <LoadingCard title="Loading Notion data" message="Fetching meals, settings, and any saved targets." />
+              <LoadingCard title="Loading your data" message="Fetching meals, settings, and any saved targets." />
             ) : null}
             {!isLoadingData && settings ? (
               <AnimatePresence mode="wait">

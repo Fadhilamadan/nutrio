@@ -81,7 +81,7 @@ export function HistoryEditForm({ meal, onSave, onCancel }: HistoryEditFormProps
             </span>
           ) : null}
         </div>
-        <p className="text-sm text-[var(--ink-muted)]">Updates are saved back to Notion.</p>
+        <p className="text-sm text-[var(--ink-muted)]">Updates are saved to your history.</p>
       </div>
       <div className="space-y-2">
         <Label htmlFor="edit-name">Meal name</Label>

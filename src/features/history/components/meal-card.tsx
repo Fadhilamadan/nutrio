@@ -69,7 +69,7 @@ export function MealCard({ meal, onEdit, onDelete }: MealCardProps) {
         <div className="surface-soft mt-4 rounded-xl p-3">
           <p className="text-sm font-semibold text-[var(--ink)]">Archive this meal?</p>
           <p className="mt-1 text-xs leading-5 text-[var(--ink-muted)]">
-            It will be archived in Notion, not permanently deleted.
+            It will be archived, not permanently deleted.
           </p>
           <div className="mt-3 flex gap-2">
             <Button size="sm" variant="destructive" onClick={deleteMeal} disabled={isDeleting}>

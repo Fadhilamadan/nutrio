@@ -25,7 +25,7 @@ export function TargetsScreen({ targets, onSave }: TargetsScreenProps) {
       <div className="surface-card rounded-xl p-5">
         <h2 className="text-xl font-bold tracking-[-0.025em] text-[var(--ink)]">Daily targets</h2>
         <p className="mt-2 text-sm leading-6 text-[var(--ink-muted)]">
-          Use the TDEE calculator to estimate starting values, then adjust and save to Notion.
+          Use the TDEE calculator to estimate starting values, then adjust and save your targets.
         </p>
       </div>
       <TargetForm key={formKey} targets={targets} onSave={onSave} />
