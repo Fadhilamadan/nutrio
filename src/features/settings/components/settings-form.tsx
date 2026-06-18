@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle, ChevronDown, Palette, Smartphone, Sparkles } from "lucide-react";
+import { CheckCircle, ChevronDown, ExternalLink, Palette, Smartphone, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,59 @@ const providerTips: Record<AiProviderName, string> = {
   OpenRouter: "One key unlocks many models including free options. Great for experimenting.",
   HuggingFace: "Open-source AI models with free tier access. Community-driven.",
   Mistral: "Privacy-focused European AI. 1 billion free tokens per month.",
+};
+
+const providerGuides: Record<AiProviderName, { url: string; modelsUrl: string; steps: string[] }> = {
+  Gemini: {
+    url: "https://aistudio.google.com/apikey",
+    modelsUrl: "https://ai.google.dev/gemini-api/docs/models",
+    steps: [
+      "Go to Google AI Studio.",
+      "Sign in with your Google account.",
+      'Click "Get API Key" → "Create API Key".',
+      "Copy the key and paste it into the field above.",
+    ],
+  },
+  Groq: {
+    url: "https://console.groq.com/keys",
+    modelsUrl: "https://console.groq.com/docs/models",
+    steps: [
+      "Go to the Groq Console.",
+      "Sign in with your Google or GitHub account.",
+      'Click "Create API Key".',
+      "Copy the key and paste it into the field above.",
+    ],
+  },
+  OpenRouter: {
+    url: "https://openrouter.ai/keys",
+    modelsUrl: "https://openrouter.ai/collections/free-models",
+    steps: [
+      "Go to OpenRouter Keys.",
+      "Sign in with your Google or GitHub account.",
+      'Click "Create Key".',
+      "Copy the key and paste it into the field above.",
+    ],
+  },
+  HuggingFace: {
+    url: "https://huggingface.co/settings/tokens",
+    modelsUrl: "https://huggingface.co/models?other=free&sort=trending",
+    steps: [
+      "Go to Hugging Face Tokens.",
+      "Sign in or create an account.",
+      'Click "New Token", give it a name, and select "read" role.',
+      "Copy the token and paste it into the field above.",
+    ],
+  },
+  Mistral: {
+    url: "https://console.mistral.ai/api-keys/",
+    modelsUrl: "https://docs.mistral.ai/models/overview",
+    steps: [
+      "Go to the Mistral Console.",
+      "Sign in with your Google or GitHub account.",
+      'Click "Create API key".',
+      "Copy the key and paste it into the field above.",
+    ],
+  },
 };
 
 function CollapsibleGroup({
@@ -77,6 +130,7 @@ export function SettingsForm({ settings, defaultModels, canInstallPwa, onInstall
   const [saveError, setSaveError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["ai", "appearance", "app"]));
+  const [showApiKeyGuide, setShowApiKeyGuide] = useState(false);
   const isIOS =
     /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   const isStandalone = "standalone" in navigator && navigator.standalone;
@@ -170,6 +224,54 @@ export function SettingsForm({ settings, defaultModels, canInstallPwa, onInstall
               </SelectContent>
             </Select>
             <p className="text-xs text-[var(--ink-muted)]">{providerTips[draftSettings.aiProvider]}</p>
+            <button
+              type="button"
+              onClick={() => setShowApiKeyGuide(!showApiKeyGuide)}
+              className="mt-1 flex items-center gap-1 text-xs text-[var(--primary)] cursor-pointer hover:underline active:scale-[0.99] transition-transform duration-75"
+            >
+              <ChevronDown
+                className="size-3 transition-transform duration-200"
+                style={{ rotate: showApiKeyGuide ? "180deg" : "0deg" }}
+              />
+              Need an API key?
+            </button>
+            <div
+              className="grid transition-[grid-template-rows] duration-200"
+              style={{ gridTemplateRows: showApiKeyGuide ? "1fr" : "0fr" }}
+            >
+              <div className="overflow-hidden">
+                <div className="bg-[var(--surface-soft)] rounded-xl p-4 text-sm leading-6 space-y-3 mt-2">
+                  <a
+                    href={providerGuides[draftSettings.aiProvider].url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 font-medium text-[var(--primary)] hover:underline"
+                  >
+                    Visit {AI_PROVIDER_LABELS[draftSettings.aiProvider]}
+                    <ExternalLink className="size-3" />
+                  </a>
+                  <ol className="space-y-2">
+                    {providerGuides[draftSettings.aiProvider].steps.map((step, i) => (
+                      <li key={i} className="flex gap-2 text-[var(--ink-secondary)]">
+                        <span className="shrink-0 mt-0.5 flex size-4 items-center justify-center rounded-full bg-[var(--ink-faint)]/20 text-[10px] font-semibold leading-none text-[var(--ink-faint)]">
+                          {i + 1}
+                        </span>
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+                  <a
+                    href={providerGuides[draftSettings.aiProvider].modelsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-[var(--primary)] hover:underline"
+                  >
+                    Browse all {AI_PROVIDER_LABELS[draftSettings.aiProvider]} models
+                    <ExternalLink className="size-3" />
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="model">AI Model</Label>
