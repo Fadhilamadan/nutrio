@@ -31,6 +31,15 @@ export const targetsSchema = z.object({
   fat: fatSchema,
 });
 
+export const settingsSchema = z.object({
+  aiProvider: z.enum(["Gemini", "Groq", "OpenRouter", "HuggingFace", "Mistral"]),
+  aiModel: z.string().min(1).max(160),
+  apiKey: z.string().min(1).max(400),
+  notifications: z.boolean(),
+  pwaInstalled: z.boolean(),
+  theme: z.enum(["System", "Light", "Dark"]),
+});
+
 export const mealRequestSchema = z.object({
   userId: z.string(),
   name: z.string().min(1, "Meal name is required").max(160, "Meal name is too long"),

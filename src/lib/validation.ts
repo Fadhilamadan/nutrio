@@ -2,8 +2,8 @@ import { ZodError } from "zod";
 
 import type { AiProviderName } from "@/lib/ai";
 import { AI_PROVIDERS } from "@/lib/ai";
-import { mealRequestSchema, targetsSchema } from "@/lib/schemas";
-import type { Meal, Settings } from "@/lib/types";
+import { mealRequestSchema, settingsSchema, targetsSchema } from "@/lib/schemas";
+import type { Meal } from "@/lib/types";
 
 type AnalyzeInput = {
   imageBase64: string;
@@ -34,11 +34,6 @@ function text(value: unknown, name: string, maxLength = MAX_TEXT_LENGTH) {
 function optionalText(value: unknown, name: string, maxLength = MAX_TEXT_LENGTH) {
   if (value == null) return "";
   return text(value, name, maxLength);
-}
-
-function booleanValue(value: unknown, name: string) {
-  if (typeof value !== "boolean") throw new ValidationError(`${name} must be true or false.`);
-  return value;
 }
 
 function validateProvider(provider: string): AiProviderName {
@@ -100,20 +95,15 @@ export function parseTargetsRequest(value: unknown) {
   }
 }
 
-export function parseSettingsRequest(value: unknown): Settings {
+export function parseSettingsRequest(value: unknown) {
   if (!isRecord(value)) throw new ValidationError("Settings must be an object.");
 
-  const theme = text(value.theme, "Theme", 20);
-  if (theme !== "System" && theme !== "Light" && theme !== "Dark") throw new ValidationError("Theme is invalid.");
-
-  const provider = validateProvider(text(value.aiProvider, "AI provider", 40));
-
-  return {
-    aiProvider: provider,
-    aiModel: text(value.aiModel, "AI model", 160),
-    apiKey: text(value.apiKey, "API key", 400),
-    notifications: booleanValue(value.notifications, "Notifications"),
-    pwaInstalled: booleanValue(value.pwaInstalled, "PWA installed"),
-    theme,
-  };
+  try {
+    return settingsSchema.parse(value);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      throw new ValidationError(formatZodError(error));
+    }
+    throw error;
+  }
 }
