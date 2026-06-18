@@ -98,12 +98,6 @@ export function useSettings(activeUser: User | null) {
     if (choice.outcome === "accepted") await saveSettings({ ...settings, pwaInstalled: true });
   }
 
-  async function requestNotifications() {
-    if (!settings || typeof Notification === "undefined") return;
-    const permission = await Notification.requestPermission();
-    await saveSettings({ ...settings, notifications: permission === "granted" });
-  }
-
   return {
     settings,
     settingsError,
@@ -112,6 +106,5 @@ export function useSettings(activeUser: User | null) {
     defaultModels,
     saveSettings,
     installPwa,
-    requestNotifications,
   };
 }

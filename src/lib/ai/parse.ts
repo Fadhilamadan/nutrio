@@ -1,8 +1,8 @@
 import type { AnalysisResult } from "@/lib/types";
 
-function numberValue(value: unknown) {
+function numberValue(value: unknown, max = 10000) {
   const number = Number(value);
-  return Number.isFinite(number) ? Math.max(number, 0) : 0;
+  return Number.isFinite(number) ? Math.min(Math.max(number, 0), max) : 0;
 }
 
 export function parseAnalysis(content: string, providerName: string): AnalysisResult {
@@ -31,13 +31,13 @@ export function parseAnalysis(content: string, providerName: string): AnalysisRe
 
   return {
     name: String(rawResponse.mealName ?? rawResponse.name ?? "Analyzed meal"),
-    calories: numberValue(rawResponse.calories),
-    protein: numberValue(rawResponse.protein),
-    carbs: numberValue(rawResponse.carbs),
-    fat: numberValue(rawResponse.fat),
+    calories: numberValue(rawResponse.calories, 10000),
+    protein: numberValue(rawResponse.protein, 1000),
+    carbs: numberValue(rawResponse.carbs, 1000),
+    fat: numberValue(rawResponse.fat, 500),
     servingEstimate: String(rawResponse.servingEstimate ?? "Estimated from image"),
     items,
-    confidence: Math.min(numberValue(rawResponse.confidence), 1),
+    confidence: numberValue(rawResponse.confidence, 1),
     notes: String(rawResponse.notes ?? "Estimated from image. No image was stored."),
     aiProvider: providerName,
   };

@@ -17,8 +17,8 @@ type SettingsRecord = Settings & { id: string; userId: string };
 
 const themes: Settings["theme"][] = ["System", "Light", "Dark"];
 const fallbackSettings: Settings = {
-  aiProvider: "OpenRouter",
-  aiModel: process.env.OPENROUTER_DEFAULT_MODEL ?? "openrouter/free",
+  aiProvider: "Groq",
+  aiModel: process.env.GROQ_DEFAULT_MODEL ?? "meta-llama/llama-4-scout-17b-16e-instruct",
   apiKey: "",
   notifications: true,
   pwaInstalled: false,

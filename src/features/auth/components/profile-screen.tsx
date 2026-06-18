@@ -25,8 +25,7 @@ export function ProfileScreen({ user }: ProfileScreenProps) {
       <section className="surface-card rounded-xl p-5">
         <h2 className="text-lg font-bold text-[var(--ink)]">Google account</h2>
         <p className="mt-2 text-sm leading-6 text-[var(--ink-muted)]">
-          This authenticated user is connected to a Notion user record. Meals, targets, and settings are isolated by
-          this user ID.
+          This authenticated user has a connected profile. Meals, targets, and settings are isolated by this user ID.
         </p>
       </section>
       <section className="surface-card rounded-xl p-5">
@@ -72,7 +71,7 @@ export function ProfileScreen({ user }: ProfileScreenProps) {
         className="w-full"
         onClick={() => {
           clearNutrioApiKeys();
-          signOut();
+          signOut({ callbackUrl: "/" });
         }}
       >
         <LogOut className="size-4" />

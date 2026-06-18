@@ -1,6 +1,9 @@
+import { ZodError } from "zod";
+
 import type { AiProviderName } from "@/lib/ai";
 import { AI_PROVIDERS } from "@/lib/ai";
-import type { Meal, Settings, Targets } from "@/lib/types";
+import { mealRequestSchema, settingsSchema, targetsSchema } from "@/lib/schemas";
+import type { Meal } from "@/lib/types";
 
 type AnalyzeInput = {
   imageBase64: string;
@@ -12,7 +15,6 @@ type AnalyzeInput = {
 
 const MAX_TEXT_LENGTH = 500;
 const MAX_IMAGE_DATA_URL_LENGTH = 8_000_000;
-const TIME_FORMAT_REGEX = /^\d{2}:\d{2}$/;
 
 export class ValidationError extends Error {
   status = 400;
@@ -34,30 +36,20 @@ function optionalText(value: unknown, name: string, maxLength = MAX_TEXT_LENGTH)
   return text(value, name, maxLength);
 }
 
-function finiteNumber(value: unknown, name: string) {
-  const number = typeof value === "number" ? value : Number(value);
-  if (!Number.isFinite(number) || number < 0) throw new ValidationError(`${name} must be a positive number.`);
-  return number;
-}
-
-function booleanValue(value: unknown, name: string) {
-  if (typeof value !== "boolean") throw new ValidationError(`${name} must be true or false.`);
-  return value;
-}
-
-function stringList(value: unknown, name: string) {
-  if (!Array.isArray(value)) throw new ValidationError(`${name} must be a list.`);
-  return value
-    .map((item) => text(item, name, 120))
-    .filter(Boolean)
-    .slice(0, 25);
-}
-
 function validateProvider(provider: string): AiProviderName {
   if (!AI_PROVIDERS.includes(provider as AiProviderName)) {
     throw new ValidationError(`AI provider must be one of: ${AI_PROVIDERS.join(", ")}.`);
   }
   return provider as AiProviderName;
+}
+
+function formatZodError(error: ZodError): string {
+  return error.issues
+    .map((issue) => {
+      const path = issue.path.length ? `${issue.path.join(".")}: ` : "";
+      return `${path}${issue.message}`;
+    })
+    .join("; ");
 }
 
 export function parseAnalyzeRequest(value: unknown): AnalyzeInput {
@@ -80,52 +72,38 @@ export function parseAnalyzeRequest(value: unknown): AnalyzeInput {
 export function parseMealRequest(value: unknown): Omit<Meal, "id" | "time"> {
   if (!isRecord(value)) throw new ValidationError("Meal must be an object.");
 
-  return {
-    userId: "",
-    name: text(value.name, "Meal name", 160),
-    date: text(value.date, "Meal date", 80),
-    calories: finiteNumber(value.calories, "Calories"),
-    protein: finiteNumber(value.protein, "Protein"),
-    carbs: finiteNumber(value.carbs, "Carbs"),
-    fat: finiteNumber(value.fat, "Fat"),
-    servingEstimate: optionalText(value.servingEstimate, "Serving estimate", 240),
-    items: stringList(value.items, "Food items"),
-    confidence: Math.min(finiteNumber(value.confidence, "Confidence"), 1),
-    notes: optionalText(value.notes, "Notes", 1_000),
-    aiProvider: optionalText(value.aiProvider, "AI provider", 80) || "OpenRouter",
-    editedByUser: booleanValue(value.editedByUser, "Edited by user"),
-  };
+  try {
+    return mealRequestSchema.parse(value) as Omit<Meal, "id" | "time">;
+  } catch (error) {
+    if (error instanceof ZodError) {
+      throw new ValidationError(formatZodError(error));
+    }
+    throw error;
+  }
 }
 
-export function parseTargetsRequest(value: unknown): Targets {
+export function parseTargetsRequest(value: unknown) {
   if (!isRecord(value)) throw new ValidationError("Targets must be an object.");
 
-  const reminderTime = text(value.reminderTime, "Reminder time", 5);
-  if (!TIME_FORMAT_REGEX.test(reminderTime)) throw new ValidationError("Reminder time must use HH:mm format.");
-
-  return {
-    calories: finiteNumber(value.calories, "Daily calories"),
-    protein: finiteNumber(value.protein, "Daily protein"),
-    carbs: finiteNumber(value.carbs, "Daily carbs"),
-    fat: finiteNumber(value.fat, "Daily fat"),
-    reminderTime,
-  };
+  try {
+    return targetsSchema.parse(value);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      throw new ValidationError(formatZodError(error));
+    }
+    throw error;
+  }
 }
 
-export function parseSettingsRequest(value: unknown): Settings {
+export function parseSettingsRequest(value: unknown) {
   if (!isRecord(value)) throw new ValidationError("Settings must be an object.");
 
-  const theme = text(value.theme, "Theme", 20);
-  if (theme !== "System" && theme !== "Light" && theme !== "Dark") throw new ValidationError("Theme is invalid.");
-
-  const provider = validateProvider(text(value.aiProvider, "AI provider", 40));
-
-  return {
-    aiProvider: provider,
-    aiModel: text(value.aiModel, "AI model", 160),
-    apiKey: text(value.apiKey, "API key", 400),
-    notifications: booleanValue(value.notifications, "Notifications"),
-    pwaInstalled: booleanValue(value.pwaInstalled, "PWA installed"),
-    theme,
-  };
+  try {
+    return settingsSchema.parse(value);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      throw new ValidationError(formatZodError(error));
+    }
+    throw error;
+  }
 }

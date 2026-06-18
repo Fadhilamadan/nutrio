@@ -14,8 +14,17 @@ import {
   type AIAnalysisResultEditorHandle,
 } from "@/features/analyze/components/ai-analysis-result-editor";
 import { ImageUploader } from "@/features/analyze/components/image-uploader";
+import { AI_PROVIDER_LABELS } from "@/lib/ai";
 import { analyzeFoodImage, createMealFromAnalysis } from "@/lib/api";
 import type { AnalysisResult, Meal, Settings, User } from "@/lib/types";
+
+const PROVIDER_KEY_URLS: Record<string, string> = {
+  Gemini: "https://aistudio.google.com/apikey",
+  Groq: "https://console.groq.com/keys",
+  OpenRouter: "https://openrouter.ai/keys",
+  HuggingFace: "https://huggingface.co/settings/tokens",
+  Mistral: "https://console.mistral.ai/api-keys",
+};
 
 type AnalyzeFoodScreenProps = {
   user: User;
@@ -124,6 +133,17 @@ export function AnalyzeFoodScreen({ user, settings, onSaveMeal, onNavigateToSett
                 <SettingsIcon className="size-4" />
                 Go to Settings
               </Button>
+              <p className="mt-3 text-xs text-[var(--ink-muted)]">
+                Need help finding an API key?{" "}
+                <a
+                  href={PROVIDER_KEY_URLS[settings.aiProvider]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--primary)] underline underline-offset-2 hover:no-underline"
+                >
+                  Get a {AI_PROVIDER_LABELS[settings.aiProvider]} key
+                </a>
+              </p>
             </div>
           </div>
         </div>

@@ -48,10 +48,10 @@ export function HistoryEditForm({ meal, onSave, onCancel }: HistoryEditFormProps
 
     const errors: Partial<Record<string, string>> = {};
     if (!draft.name.trim()) errors.name = "Meal name is required";
-    if (!draft.calories || draft.calories <= 0) errors.calories = "Must be greater than 0";
-    if (!draft.protein || draft.protein <= 0) errors.protein = "Must be greater than 0";
-    if (!draft.carbs || draft.carbs <= 0) errors.carbs = "Must be greater than 0";
-    if (!draft.fat || draft.fat <= 0) errors.fat = "Must be greater than 0";
+    if (draft.calories < 0) errors.calories = "Must not be negative";
+    if (draft.protein < 0) errors.protein = "Must not be negative";
+    if (draft.carbs < 0) errors.carbs = "Must not be negative";
+    if (draft.fat < 0) errors.fat = "Must not be negative";
 
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
@@ -81,7 +81,7 @@ export function HistoryEditForm({ meal, onSave, onCancel }: HistoryEditFormProps
             </span>
           ) : null}
         </div>
-        <p className="text-sm text-[var(--ink-muted)]">Updates are saved back to Notion.</p>
+        <p className="text-sm text-[var(--ink-muted)]">Updates are saved to your history.</p>
       </div>
       <div className="space-y-2">
         <Label htmlFor="edit-name">Meal name</Label>

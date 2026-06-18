@@ -4,10 +4,12 @@
   "description": "AI food macro tracking for families.",
   "start_url": "/",
   "display": "standalone",
+  "display_override": ["standalone", "browser"],
   "background_color": "#f6f5f4",
   "theme_color": "#f6f5f4",
   "orientation": "portrait",
   "categories": ["health", "fitness", "food"],
+  "lang": "en",
   "icons": [
     {
       "src": "/favicon/android-chrome-192x192.png",
@@ -20,6 +22,12 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

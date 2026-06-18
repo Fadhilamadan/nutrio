@@ -1,17 +1,15 @@
 "use client";
 
 import { lazy, Suspense, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Toaster } from "sonner";
 
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
 import { FloatingCameraButton } from "@/components/layout/floating-camera-button";
-import { NotificationPoller } from "@/components/layout/notification-poller";
 import { ScreenHeader } from "@/components/layout/screen-header";
 import { AppFooter } from "@/components/shared/app-footer";
 import { ErrorBoundary } from "@/components/shared/error-boundary";
 import { LoadingCard } from "@/components/shared/loading-card";
-import { NotionErrorCard } from "@/components/shared/notion-error-card";
 import { Button } from "@/components/ui/button";
 import { ErrorCard } from "@/components/ui/error-card";
 import { useUser } from "@/features/auth/hooks/use-user";
@@ -61,6 +59,7 @@ const headerCopy: Record<Screen, { eyebrow: string; title: string }> = {
 };
 
 export function AppShell() {
+  const shouldReduceMotion = useReducedMotion();
   const { activeUser, authError, status } = useUser();
   const { todayMeals, todayError, prependTodayMeal, updateTodayMeal, removeTodayMeal } = useTodayMeals(activeUser);
   const {
@@ -76,16 +75,8 @@ export function AppShell() {
     removeHistoryMeal,
   } = useHistoryMeals(activeUser);
   const { targets, targetsError, saveTargets } = useTargets(activeUser);
-  const {
-    settings,
-    settingsError,
-    isLoadingSettings,
-    installPrompt,
-    defaultModels,
-    saveSettings,
-    installPwa,
-    requestNotifications,
-  } = useSettings(activeUser);
+  const { settings, settingsError, isLoadingSettings, installPrompt, defaultModels, saveSettings, installPwa } =
+    useSettings(activeUser);
 
   const [screen, setScreen] = useState<Screen>("dashboard");
 
@@ -115,7 +106,7 @@ export function AppShell() {
     return (
       <div className="grid min-h-dvh place-items-center bg-[var(--background)] p-5 text-[var(--foreground)]">
         <div className="w-full max-w-[360px]">
-          <LoadingCard title="Connecting profile" message="Matching your Google account to a Notion user record." />
+          <LoadingCard title="Connecting profile" message="Matching your Google account to your user record." />
         </div>
       </div>
     );
@@ -140,23 +131,15 @@ export function AppShell() {
   }
 
   async function updateMeal(meal: Meal) {
-    try {
-      const savedMeal = await updateMealApi(meal);
-      updateTodayMeal(savedMeal);
-      updateHistoryMeal(savedMeal);
-    } catch (error) {
-      throw error;
-    }
+    const savedMeal = await updateMealApi(meal);
+    updateTodayMeal(savedMeal);
+    updateHistoryMeal(savedMeal);
   }
 
   async function deleteMeal(id: string) {
-    try {
-      await deleteMealApi(id);
-      removeTodayMeal(id);
-      removeHistoryMeal(id);
-    } catch (error) {
-      throw error;
-    }
+    await deleteMealApi(id);
+    removeTodayMeal(id);
+    removeHistoryMeal(id);
   }
 
   const isLoadingData = isLoadingSettings && !dataError;
@@ -164,15 +147,9 @@ export function AppShell() {
   return (
     <div className="min-h-dvh bg-[var(--background)] text-[var(--foreground)] md:grid md:place-items-center md:p-6">
       <Toaster />
-      <NotificationPoller
-        notificationsEnabled={Boolean(settings?.notifications)}
-        reminderTime={targets?.reminderTime}
-        meals={todayMeals}
-        targets={targets}
-      />
       <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.98 }}
+        animate={shouldReduceMotion ? false : { opacity: 1, scale: 1 }}
         className="relative mx-auto flex h-dvh w-full max-w-[430px] flex-col overflow-hidden bg-[var(--background)] shadow-[var(--shadow-elevated)] md:h-[min(920px,calc(100dvh-3rem))] md:rounded-[2rem]"
       >
         {gradientDecoration}
@@ -189,9 +166,9 @@ export function AppShell() {
             }
           />
           <div className="mt-6 space-y-5">
-            {dataError ? <NotionErrorCard message={dataError} onRetry={() => window.location.reload()} /> : null}
+            {dataError ? <ErrorCard message={dataError} onRetry={() => window.location.reload()} /> : null}
             {isLoadingData ? (
-              <LoadingCard title="Loading Notion data" message="Fetching meals, settings, and any saved targets." />
+              <LoadingCard title="Loading your data" message="Fetching meals, settings, and any saved targets." />
             ) : null}
             {!isLoadingData && settings ? (
               <AnimatePresence mode="wait">
@@ -251,7 +228,6 @@ export function AppShell() {
                         defaultModels={defaultModels}
                         canInstallPwa={Boolean(installPrompt)}
                         onInstallPwa={installPwa}
-                        onRequestNotifications={requestNotifications}
                         onSave={saveSettings}
                       />
                     </ErrorBoundary>
