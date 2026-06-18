@@ -43,6 +43,6 @@ export const mealRequestSchema = z.object({
   items: z.array(z.string().max(120)).max(25).default([]),
   confidence: z.coerce.number().min(0).max(1),
   notes: z.string().max(1000).default(""),
-  aiProvider: z.string().max(80).default("OpenRouter"),
+  aiProvider: z.string().max(80).default("Groq"),
   editedByUser: z.boolean(),
 });
