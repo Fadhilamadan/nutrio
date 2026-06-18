@@ -131,9 +131,6 @@ export function LandingPage() {
         <div className="mx-auto max-w-[1000px]">
           <div className="grid gap-16 md:grid-cols-2 md:items-center">
             <div>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ink-faint)]">
-                What is Nutrio
-              </p>
               <h2 className="text-3xl font-black tracking-[-0.03em] md:text-4xl">
                 Nutrition tracking, but make it effortless.
               </h2>
@@ -183,9 +180,6 @@ export function LandingPage() {
       >
         <div className="mx-auto max-w-[1000px]">
           <div className="mb-14 text-center">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ink-faint)]">
-              Why it matters
-            </p>
             <h2 className="text-3xl font-black tracking-[-0.03em] md:text-4xl">Know what fuels you.</h2>
             <p className="mx-auto mt-4 max-w-[65ch] text-base leading-7 text-[var(--ink-muted)]">
               Studies show people underestimate their intake by up to{" "}
@@ -293,9 +287,6 @@ export function LandingPage() {
               </div>
             </div>
             <div className="order-1 md:order-2">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ink-faint)]">
-                The impact
-              </p>
               <h2 className="text-3xl font-black tracking-[-0.03em] md:text-4xl">Small habit, big difference.</h2>
               <p className="mt-4 text-base leading-7 text-[var(--ink-muted)]">
                 A single photo per meal is all it takes. Over days and weeks, those snapshots become a nutritional diary
@@ -346,13 +337,14 @@ export function LandingPage() {
                     style={{ transform: openIndex === i ? "rotate(180deg)" : "rotate(0deg)" }}
                   />
                 </button>
-                <motion.div
-                  animate={{ height: openIndex === i ? "auto" : 0 }}
-                  transition={{ duration: 0.3, ease }}
-                  className="overflow-hidden"
+                <div
+                  className="grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                  style={{ gridTemplateRows: openIndex === i ? "1fr" : "0fr" }}
                 >
-                  <p className="px-5 pb-5 text-sm leading-6 text-[var(--ink-muted)]">{item.answer}</p>
-                </motion.div>
+                  <div className="min-h-0 overflow-hidden">
+                    <p className="px-5 pb-5 text-sm leading-6 text-[var(--ink-muted)]">{item.answer}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
