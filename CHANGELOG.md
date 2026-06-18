@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.4.0 (2026-06-18)
+
+
+### Features
+
+* add zod validation with logical range bounds ([464903f](https://github.com/Fadhilamadan/nutrio/commit/464903f1955f1b451679883156f1d2615194c80a))
+* AI JSON enforcement, settings redesign, and form validation improvements ([#1](https://github.com/Fadhilamadan/nutrio/issues/1)) ([fc2db00](https://github.com/Fadhilamadan/nutrio/commit/fc2db00bdd097cb6f4b564ceeca22363f4207e6e))
+* **analyze:** add API-key onboarding banner and secure localStorage cleanup ([#2](https://github.com/Fadhilamadan/nutrio/issues/2)) ([b457edb](https://github.com/Fadhilamadan/nutrio/commit/b457edb435d280161b2926ab03bafa93df67600d))
+* **analyze:** optional food description context and halal dietary guidelines ([#3](https://github.com/Fadhilamadan/nutrio/issues/3)) ([985767c](https://github.com/Fadhilamadan/nutrio/commit/985767c09571f27ecdb70c23b45264acd06d7a52))
+* initial app ([13b3741](https://github.com/Fadhilamadan/nutrio/commit/13b374114613ee39c2f9f0244bfb496b10bd2d2f))
+* **landing:** add FAQ accordion section to landing page ([5ccec2a](https://github.com/Fadhilamadan/nutrio/commit/5ccec2ab3e6a0d171c7365869438c93e3e0d5597))
+* remove reminder and notification feature ([d0aa1eb](https://github.com/Fadhilamadan/nutrio/commit/d0aa1eb3c94c36636bf25ed41a4cb4d519dfa310))
+* **settings:** add per-provider API key tutorial with model reference links ([2d583cf](https://github.com/Fadhilamadan/nutrio/commit/2d583cfe58ae8b74de4f07417e86d3557a162087))
+
+
+### Bug Fixes
+
+* **anim:** replace height animation with grid-template-rows in target calculator ([049c899](https://github.com/Fadhilamadan/nutrio/commit/049c899fc9704094ec2fe6d6b70c1ddf84e68ccb))
+* **auth:** add explicit cookie config and jwt callbacks ([9d69064](https://github.com/Fadhilamadan/nutrio/commit/9d69064a93502dc537b8b217df3cd703d2d9c132))
+* **deps:** resolve npm audit vulnerabilities in postcss and uuid ([9201eaf](https://github.com/Fadhilamadan/nutrio/commit/9201eaf86d91c0df1a96395d34bc34f2f30386ae))
+* **pwa:** improve iOS appearance and remove blur from nav ([bc03001](https://github.com/Fadhilamadan/nutrio/commit/bc03001be0cf8b07aeb77382c493c1ac6a45ed5a))
+* **settings:** switch default AI provider from OpenRouter to Groq ([83d9cdd](https://github.com/Fadhilamadan/nutrio/commit/83d9cdd35f22866b5f9578f959221b96ba7cae66))
+
 ## 1.3.0 (2026-06-17)
 
 
