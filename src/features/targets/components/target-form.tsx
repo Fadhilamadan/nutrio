@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { Calculator, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 
@@ -159,135 +158,130 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
             <ChevronDown className="mt-1 size-5 text-[var(--ink-muted)]" />
           )}
         </button>
-        <AnimatePresence initial={false}>
-          {showCalculator ? (
-            <motion.div
-              key="calculator"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden"
-            >
-              <div className="mt-5 grid grid-cols-2 gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor="tdee-age">Age</Label>
-                  <Input
-                    id="tdee-age"
-                    inputMode="numeric"
-                    className={calculatorErrors.age ? "border-[var(--danger)]" : undefined}
-                    value={age}
-                    onChange={(event) => {
-                      setAge(Number(event.target.value) || 0);
-                      setCalculatorErrors((prev) => ({ ...prev, age: undefined }));
-                    }}
-                  />
-                  {calculatorErrors.age ? <p className="text-xs text-[var(--danger)]">{calculatorErrors.age}</p> : null}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="tdee-sex">Sex</Label>
-                  <Select value={sex} onValueChange={(value: Sex) => setSex(value)}>
-                    <SelectTrigger id="tdee-sex">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="tdee-height">Height, cm</Label>
-                  <Input
-                    id="tdee-height"
-                    inputMode="numeric"
-                    className={calculatorErrors.height ? "border-[var(--danger)]" : undefined}
-                    value={height}
-                    onChange={(event) => {
-                      setHeight(Number(event.target.value) || 0);
-                      setCalculatorErrors((prev) => ({ ...prev, height: undefined }));
-                    }}
-                  />
-                  {calculatorErrors.height ? (
-                    <p className="text-xs text-[var(--danger)]">{calculatorErrors.height}</p>
-                  ) : null}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="tdee-weight">Weight, kg</Label>
-                  <Input
-                    id="tdee-weight"
-                    inputMode="decimal"
-                    className={calculatorErrors.weight ? "border-[var(--danger)]" : undefined}
-                    value={weight}
-                    onChange={(event) => {
-                      setWeight(Number(event.target.value) || 0);
-                      setCalculatorErrors((prev) => ({ ...prev, weight: undefined }));
-                    }}
-                  />
-                  {calculatorErrors.weight ? (
-                    <p className="text-xs text-[var(--danger)]">{calculatorErrors.weight}</p>
-                  ) : null}
-                </div>
-                <div className="col-span-2 space-y-2">
-                  <Label htmlFor="tdee-bodyfat">
-                    Body fat % <span className="text-[var(--ink-muted)]">(optional)</span>
-                  </Label>
-                  <Input
-                    id="tdee-bodyfat"
-                    inputMode="decimal"
-                    className={calculatorErrors.bodyFat ? "border-[var(--danger)]" : undefined}
-                    value={bodyFat}
-                    onChange={(event) => {
-                      setBodyFat(event.target.value);
-                      setCalculatorErrors((prev) => ({ ...prev, bodyFat: undefined }));
-                    }}
-                    placeholder="e.g. 15"
-                  />
-                  {calculatorErrors.bodyFat ? (
-                    <p className="text-xs text-[var(--danger)]">{calculatorErrors.bodyFat}</p>
-                  ) : null}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="tdee-activity">Activity</Label>
-                  <Select value={activity} onValueChange={(value: Activity) => setActivity(value)}>
-                    <SelectTrigger id="tdee-activity">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(Object.entries(activityDetails) as [Activity, (typeof activityDetails)[Activity]][]).map(
-                        ([key, detail]) => (
-                          <SelectItem key={key} value={key}>
-                            {detail.label}
-                          </SelectItem>
-                        ),
-                      )}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-[var(--ink-muted)]">{activityDetails[activity].description}</p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="tdee-goal">Goal</Label>
-                  <Select value={goal} onValueChange={(value: Goal) => setGoal(value)}>
-                    <SelectTrigger id="tdee-goal">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(Object.entries(goalDetails) as [Goal, (typeof goalDetails)[Goal]][]).map(([key, detail]) => (
+        <div
+          className="grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          style={{ gridTemplateRows: showCalculator ? "1fr" : "0fr" }}
+        >
+          <div className="min-h-0 overflow-hidden">
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="tdee-age">Age</Label>
+                <Input
+                  id="tdee-age"
+                  inputMode="numeric"
+                  className={calculatorErrors.age ? "border-[var(--danger)]" : undefined}
+                  value={age}
+                  onChange={(event) => {
+                    setAge(Number(event.target.value) || 0);
+                    setCalculatorErrors((prev) => ({ ...prev, age: undefined }));
+                  }}
+                />
+                {calculatorErrors.age ? <p className="text-xs text-[var(--danger)]">{calculatorErrors.age}</p> : null}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tdee-sex">Sex</Label>
+                <Select value={sex} onValueChange={(value: Sex) => setSex(value)}>
+                  <SelectTrigger id="tdee-sex">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tdee-height">Height, cm</Label>
+                <Input
+                  id="tdee-height"
+                  inputMode="numeric"
+                  className={calculatorErrors.height ? "border-[var(--danger)]" : undefined}
+                  value={height}
+                  onChange={(event) => {
+                    setHeight(Number(event.target.value) || 0);
+                    setCalculatorErrors((prev) => ({ ...prev, height: undefined }));
+                  }}
+                />
+                {calculatorErrors.height ? (
+                  <p className="text-xs text-[var(--danger)]">{calculatorErrors.height}</p>
+                ) : null}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tdee-weight">Weight, kg</Label>
+                <Input
+                  id="tdee-weight"
+                  inputMode="decimal"
+                  className={calculatorErrors.weight ? "border-[var(--danger)]" : undefined}
+                  value={weight}
+                  onChange={(event) => {
+                    setWeight(Number(event.target.value) || 0);
+                    setCalculatorErrors((prev) => ({ ...prev, weight: undefined }));
+                  }}
+                />
+                {calculatorErrors.weight ? (
+                  <p className="text-xs text-[var(--danger)]">{calculatorErrors.weight}</p>
+                ) : null}
+              </div>
+              <div className="col-span-2 space-y-2">
+                <Label htmlFor="tdee-bodyfat">
+                  Body fat % <span className="text-[var(--ink-muted)]">(optional)</span>
+                </Label>
+                <Input
+                  id="tdee-bodyfat"
+                  inputMode="decimal"
+                  className={calculatorErrors.bodyFat ? "border-[var(--danger)]" : undefined}
+                  value={bodyFat}
+                  onChange={(event) => {
+                    setBodyFat(event.target.value);
+                    setCalculatorErrors((prev) => ({ ...prev, bodyFat: undefined }));
+                  }}
+                  placeholder="e.g. 15"
+                />
+                {calculatorErrors.bodyFat ? (
+                  <p className="text-xs text-[var(--danger)]">{calculatorErrors.bodyFat}</p>
+                ) : null}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tdee-activity">Activity</Label>
+                <Select value={activity} onValueChange={(value: Activity) => setActivity(value)}>
+                  <SelectTrigger id="tdee-activity">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(Object.entries(activityDetails) as [Activity, (typeof activityDetails)[Activity]][]).map(
+                      ([key, detail]) => (
                         <SelectItem key={key} value={key}>
                           {detail.label}
                         </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-[var(--ink-muted)]">{goalDetails[goal].description}</p>
-                </div>
+                      ),
+                    )}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-[var(--ink-muted)]">{activityDetails[activity].description}</p>
               </div>
-              <Button type="button" className="mt-5 w-full" onClick={calculateTargets}>
-                Calculate target
-              </Button>
-              <p className="mt-3 text-center text-xs text-[var(--ink-muted)]">30% protein · 35% fat · 35% carbs</p>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
+              <div className="space-y-2">
+                <Label htmlFor="tdee-goal">Goal</Label>
+                <Select value={goal} onValueChange={(value: Goal) => setGoal(value)}>
+                  <SelectTrigger id="tdee-goal">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(Object.entries(goalDetails) as [Goal, (typeof goalDetails)[Goal]][]).map(([key, detail]) => (
+                      <SelectItem key={key} value={key}>
+                        {detail.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-[var(--ink-muted)]">{goalDetails[goal].description}</p>
+              </div>
+            </div>
+            <Button type="button" className="mt-5 w-full" onClick={calculateTargets}>
+              Calculate target
+            </Button>
+            <p className="mt-3 text-center text-xs text-[var(--ink-muted)]">30% protein · 35% fat · 35% carbs</p>
+          </div>
+        </div>
       </section>
       <section className="surface-card space-y-4 rounded-xl p-5">
         <div>
