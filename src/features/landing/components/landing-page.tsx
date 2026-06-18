@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { signIn } from "next-auth/react";
-import { motion, type Transition } from "framer-motion";
+import { motion, type Transition, useReducedMotion } from "framer-motion";
 import { ArrowDown, BarChart3, Camera, ChevronDown, History, ShieldCheck, Sparkles, Target } from "lucide-react";
 
 import { AppFooter } from "@/components/shared/app-footer";
@@ -64,6 +64,7 @@ const faqItems = [
 
 export function LandingPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   const scrollTo = useCallback((id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -81,8 +82,8 @@ export function LandingPage() {
           className="absolute -right-24 top-52 size-64 rounded-full bg-[color-mix(in_srgb,var(--accent-purple)_8%,transparent)] blur-3xl"
         />
         <motion.div
-          initial={{ opacity: 0, y: 32 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 32 }}
+          animate={shouldReduceMotion ? false : { opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="relative z-10 max-w-[600px]"
         >
@@ -105,8 +106,8 @@ export function LandingPage() {
           </div>
         </motion.div>
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={shouldReduceMotion ? false : { opacity: 0 }}
+          animate={shouldReduceMotion ? false : { opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.8 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2"
         >
@@ -122,7 +123,7 @@ export function LandingPage() {
 
       <motion.section
         id="what-section"
-        initial="hidden"
+        initial={shouldReduceMotion ? false : "hidden"}
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
         variants={sectionVariants}
@@ -154,7 +155,7 @@ export function LandingPage() {
                 <motion.div
                   key={item.label}
                   custom={i}
-                  initial="hidden"
+                  initial={shouldReduceMotion ? false : "hidden"}
                   whileInView="visible"
                   viewport={{ once: true }}
                   variants={staggerVariants}
@@ -172,7 +173,7 @@ export function LandingPage() {
       </motion.section>
 
       <motion.section
-        initial="hidden"
+        initial={shouldReduceMotion ? false : "hidden"}
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
         variants={sectionVariants}
@@ -215,7 +216,7 @@ export function LandingPage() {
               <motion.div
                 key={card.title}
                 custom={i}
-                initial="hidden"
+                initial={shouldReduceMotion ? false : "hidden"}
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={staggerVariants}
@@ -233,7 +234,7 @@ export function LandingPage() {
       </motion.section>
 
       <motion.section
-        initial="hidden"
+        initial={shouldReduceMotion ? false : "hidden"}
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
         variants={sectionVariants}
@@ -266,7 +267,7 @@ export function LandingPage() {
                   <motion.div
                     key={item.step}
                     custom={i}
-                    initial="hidden"
+                    initial={shouldReduceMotion ? false : "hidden"}
                     whileInView="visible"
                     viewport={{ once: true }}
                     variants={staggerVariants}
@@ -311,7 +312,7 @@ export function LandingPage() {
 
       <motion.section
         id="faq-section"
-        initial="hidden"
+        initial={shouldReduceMotion ? false : "hidden"}
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
         variants={sectionVariants}
@@ -356,8 +357,8 @@ export function LandingPage() {
         className="border-t border-[var(--hairline)] bg-[var(--surface)] px-5 py-24 text-center"
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.96 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="mx-auto max-w-[480px]"
