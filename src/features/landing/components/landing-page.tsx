@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { signIn } from "next-auth/react";
-import { motion, type Transition } from "framer-motion";
-import { ArrowDown, BarChart3, Camera, History, ShieldCheck, Sparkles, Target } from "lucide-react";
+import { AnimatePresence, motion, type Transition } from "framer-motion";
+import { ArrowDown, BarChart3, Camera, ChevronDown, History, ShieldCheck, Sparkles, Target } from "lucide-react";
 
 import { AppFooter } from "@/components/shared/app-footer";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,46 @@ const staggerVariants = {
   }),
 };
 
+const faqItems = [
+  {
+    question: "How does Nutrio analyze my food?",
+    answer:
+      "Snap a photo of your meal. Nutrio sends it to an AI provider that estimates calories, protein, carbs, and fat. The image is processed transiently and never stored permanently. Your nutritional history is securely saved so you can track patterns over time.",
+  },
+  {
+    question: "How accurate is the AI analysis?",
+    answer:
+      "Accuracy depends on photo quality and meal complexity. Nutrio supports multiple AI providers so you can choose what works best for you. Results are always editable \u2014 tap any value to adjust it after analysis.",
+  },
+  {
+    question: "Is my data private?",
+    answer:
+      "Yes \u2014 images never stored, only macro metadata is saved \u2014 nothing shared.",
+  },
+  {
+    question: "What happens to my food photos?",
+    answer:
+      "Processed temporarily for AI analysis, immediately discarded. Nothing is saved.",
+  },
+  {
+    question: "Can I self-host Nutrio?",
+    answer:
+      "Yes \u2014 the repo is open-source. You can deploy your own instance and connect it to your own Notion workspace and preferred AI provider.",
+  },
+  {
+    question: "Do I need a paid account?",
+    answer: "Free to use. Just need a Google account.",
+  },
+  {
+    question: "Which AI providers are supported?",
+    answer:
+      "Gemini, Groq, OpenRouter, HuggingFace, and Mistral \u2014 configure your preference in settings.",
+  },
+];
+
 export function LandingPage() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   const scrollTo = useCallback((id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   }, []);
@@ -272,12 +311,55 @@ export function LandingPage() {
                   "Build a logged history that grows more valuable every day",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm text-[var(--ink-muted)]">
-                    <span className="mt-0.5 size-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
+                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-[var(--primary)]" />
                     {item}
                   </li>
                 ))}
               </ul>
             </div>
+          </div>
+        </div>
+      </motion.section>
+
+      <motion.section
+        id="faq-section"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={sectionVariants}
+        className="border-t border-[var(--hairline)] px-5 py-24"
+      >
+        <div className="mx-auto max-w-[700px]">
+          <p className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ink-faint)]">
+            FAQ
+          </p>
+          <h2 className="text-center text-3xl font-black tracking-[-0.03em] md:text-4xl">
+            Frequently asked questions.
+          </h2>
+          <div className="surface-card soft-shadow mt-12 divide-y divide-[var(--hairline)] overflow-hidden rounded-xl">
+            {faqItems.map((item, i) => (
+              <div key={i}>
+                <button
+                  onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm font-bold transition-colors hover:bg-[color-mix(in_srgb,var(--primary)_4%,transparent)]"
+                >
+                  {item.question}
+                  <ChevronDown
+                    className="size-4 shrink-0 text-[var(--ink-faint)] transition-transform duration-300"
+                    style={{ transform: openIndex === i ? "rotate(180deg)" : "rotate(0deg)" }}
+                  />
+                </button>
+                <motion.div
+                  animate={{ height: openIndex === i ? "auto" : 0 }}
+                  transition={{ duration: 0.3, ease }}
+                  className="overflow-hidden"
+                >
+                  <p className="px-5 pb-5 text-sm leading-6 text-[var(--ink-muted)]">
+                    {item.answer}
+                  </p>
+                </motion.div>
+              </div>
+            ))}
           </div>
         </div>
       </motion.section>
