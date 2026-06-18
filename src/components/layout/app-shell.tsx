@@ -130,23 +130,15 @@ export function AppShell() {
   }
 
   async function updateMeal(meal: Meal) {
-    try {
-      const savedMeal = await updateMealApi(meal);
-      updateTodayMeal(savedMeal);
-      updateHistoryMeal(savedMeal);
-    } catch (error) {
-      throw error;
-    }
+    const savedMeal = await updateMealApi(meal);
+    updateTodayMeal(savedMeal);
+    updateHistoryMeal(savedMeal);
   }
 
   async function deleteMeal(id: string) {
-    try {
-      await deleteMealApi(id);
-      removeTodayMeal(id);
-      removeHistoryMeal(id);
-    } catch (error) {
-      throw error;
-    }
+    await deleteMealApi(id);
+    removeTodayMeal(id);
+    removeHistoryMeal(id);
   }
 
   const isLoadingData = isLoadingSettings && !dataError;
