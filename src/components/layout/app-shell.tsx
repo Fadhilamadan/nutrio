@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Toaster } from "sonner";
 
@@ -88,7 +88,18 @@ export function AppShell() {
     installPwa,
   } = useSettings(activeUser);
 
-  const [screen, setScreen] = useState<Screen>("dashboard");
+  const [screen, setScreen] = useState<Screen>(() => {
+    if (typeof window === "undefined") return "dashboard";
+    return (sessionStorage.getItem("nutrio_screen") as Screen) || "dashboard";
+  });
+
+  useEffect(() => {
+    if (screen === "analyze") {
+      sessionStorage.setItem("nutrio_screen", "analyze");
+    } else {
+      sessionStorage.removeItem("nutrio_screen");
+    }
+  }, [screen]);
 
   if (status === "loading") {
     return (
