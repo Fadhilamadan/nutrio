@@ -3,21 +3,33 @@
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
+import { DefaultTokenBanner } from "@/components/ui/default-token-banner";
 import { EmptyStateCard } from "@/components/ui/empty-state-card";
 import { MacroCard } from "@/features/dashboard/components/macro-card";
 import { MacroProgressRing } from "@/features/dashboard/components/macro-progress-ring";
 import { MealCard } from "@/features/history/components/meal-card";
 import { totalMeals } from "@/lib/nutrition";
-import type { Meal, Targets, User } from "@/lib/types";
+import type { DefaultUsage, Meal, Targets, User } from "@/lib/types";
 
 type TodayDashboardProps = {
   user: User;
   meals: Meal[];
   targets: Targets | null;
+  defaultUsage: DefaultUsage | null;
+  isUsingDefaultToken: boolean;
   onConfigureTargets: () => void;
+  onGoToSettings: () => void;
 };
 
-export function TodayDashboard({ user, meals, targets, onConfigureTargets }: TodayDashboardProps) {
+export function TodayDashboard({
+  user,
+  meals,
+  targets,
+  defaultUsage,
+  isUsingDefaultToken,
+  onConfigureTargets,
+  onGoToSettings,
+}: TodayDashboardProps) {
   const todayMeals = meals.filter((meal) => meal.userId === user.id);
   const totals = totalMeals(todayMeals);
   const hasTargets = Boolean(targets);
@@ -29,6 +41,14 @@ export function TodayDashboard({ user, meals, targets, onConfigureTargets }: Tod
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -18 }}
     >
+      {isUsingDefaultToken && defaultUsage ? (
+        <DefaultTokenBanner
+          remaining={defaultUsage.remaining}
+          limit={defaultUsage.limit}
+          variant="banner"
+          onGoToSettings={onGoToSettings}
+        />
+      ) : null}
       <div className="surface-card soft-shadow rounded-xl p-5">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="min-w-0">

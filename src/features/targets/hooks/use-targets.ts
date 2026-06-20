@@ -39,7 +39,6 @@ export function useTargets(activeUser: User | null) {
       setTargetsError("");
       setTargets(savedTargets);
     } catch (error) {
-      setTargetsError(error instanceof Error ? error.message : "Failed to save targets.");
       throw error;
     }
   }

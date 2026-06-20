@@ -32,10 +32,17 @@ export async function analyzeFoodImage(input: {
   imageBase64: string;
   provider: Settings["aiProvider"];
   model: string;
-  apiKey: string;
+  apiKey?: string;
   foodDescription?: string;
 }) {
-  return await requestJson<AnalysisResult>("/api/analyze-food", { method: "POST", body: JSON.stringify(input) });
+  const body: Record<string, unknown> = {
+    imageBase64: input.imageBase64,
+    provider: input.provider,
+    model: input.model,
+    foodDescription: input.foodDescription,
+  };
+  if (input.apiKey) body.apiKey = input.apiKey;
+  return await requestJson<AnalysisResult>("/api/analyze-food", { method: "POST", body: JSON.stringify(body) });
 }
 
 export function createMealFromAnalysis(userId: string, result: AnalysisResult): NewMeal {

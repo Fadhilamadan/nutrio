@@ -64,7 +64,7 @@ export function parseAnalyzeRequest(value: unknown): AnalyzeInput {
     imageBase64,
     provider,
     model: optionalText(value.model, "AI model", 160),
-    apiKey: text(value.apiKey, "API key", 400),
+    apiKey: optionalText(value.apiKey, "API key", 400),
     foodDescription: optionalText(value.foodDescription, "Food description", 1_000),
   };
 }

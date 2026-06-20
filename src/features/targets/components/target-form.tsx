@@ -5,6 +5,7 @@ import { Calculator, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { FormError } from "@/components/ui/form-error";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -344,7 +345,7 @@ export function TargetForm({ targets, onSave }: TargetFormProps) {
             {fieldErrors.fat ? <p className="text-xs text-[var(--danger)]">{fieldErrors.fat}</p> : null}
           </div>
         </div>
-        {saveError ? <p className="text-sm text-[var(--danger)]">{saveError}</p> : null}
+        <FormError message={saveError} />
         <Button type="button" className="w-full" onClick={saveTargets} disabled={isSaving || !isDirty}>
           {isSaving ? "Saving targets" : "Save targets"}
         </Button>

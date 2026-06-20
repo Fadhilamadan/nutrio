@@ -217,6 +217,24 @@ and choose the provider and model that best fits their needs — including free-
 models where available. This keeps infrastructure costs near zero and gives users
 full control over their AI provider.
 
+### Default AI Token (Free Trial)
+
+New users can try Nutrio immediately without configuring an API key. A shared
+default token (configured via `DEFAULT_AI_API_KEY` in `.env`) allows up to 5
+free AI analyses ("snapshots"). This token is never exposed to the user.
+
+- The default provider is Groq (configurable via `DEFAULT_AI_PROVIDER`)
+- Usage is tracked client-side in localStorage as `nutrio-default-usage:{userId}`
+- The remaining snapshot count is displayed on the Dashboard (compact banner)
+  and Analyze screen (card)
+- After 5 snapshots, the user must configure their own API key to continue
+- The trial resets on logout (localStorage is cleared); tech-savvy users may
+  also reset via browser DevTools — this is acceptable for MVP
+- If the user later sets their own API key, the default token is paused but the
+  remaining count is preserved
+- Removing their own API key reverts to the default token with the preserved
+  remaining count
+
 ### Supported Providers (MVP)
 
 ```txt
@@ -234,8 +252,12 @@ Mistral AI        — Free tier includes Pixtral vision model. 1B tokens/month,
 
 ### Default Model
 
-No default is hard-coded. Users select their provider and model during initial
-setup. The last-used provider and model are persisted per user for convenience.
+When using the free trial (no personal API key), the default provider is Groq
+with the model configured in `GROQ_DEFAULT_MODEL`. Once a user sets their own
+API key, their chosen provider and model are used for all analyses.
+
+Users with their own key select their provider and model during initial setup.
+The last-used provider and model are persisted per user for convenience.
 
 ### Free Model Considerations
 
@@ -420,7 +442,11 @@ Users should be able to switch providers and replace API keys at any time.
 
 - AI Provider
 - AI Model
-- API Key
+- API Key (leave empty to use the free trial default token)
+
+When the API key field is empty and the user has remaining free snapshots, the
+app operates in "default token mode" — the user can analyze food without
+configuring their own key.
 
 ---
 
@@ -706,7 +732,8 @@ Features:
 
 - OpenRouter model
 - AI Model
-- API Key
+- API Key (clearing reverts to free trial default token if snapshots remain)
+- Free trial status indicator when using default token
 - PWA Settings
 
 ---

@@ -2,7 +2,7 @@ import { version } from "../../../package.json";
 
 export function AppFooter() {
   return (
-    <footer className="bg-[var(--surface-soft)] px-5 py-8 text-center text-xs text-[var(--ink-faint)]">
+    <footer className="px-5 py-8 text-center text-xs text-[var(--ink-faint)]">
       <p className="flex items-center justify-center gap-1">
         <span>&copy; {new Date().getFullYear()}</span>
         <a

@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.5.0 (2026-06-20)
+
+
+### Features
+
+* AI JSON enforcement, settings redesign, and form validation improvements ([#1](https://github.com/Fadhilamadan/nutrio/issues/1)) ([fc2db00](https://github.com/Fadhilamadan/nutrio/commit/fc2db00bdd097cb6f4b564ceeca22363f4207e6e))
+* **ai:** add retail product disambiguation to prompt ([1f2434d](https://github.com/Fadhilamadan/nutrio/commit/1f2434dcf24b03635e67413e145532a747a4415e))
+* **analyze:** add API-key onboarding banner and secure localStorage cleanup ([#2](https://github.com/Fadhilamadan/nutrio/issues/2)) ([b457edb](https://github.com/Fadhilamadan/nutrio/commit/b457edb435d280161b2926ab03bafa93df67600d))
+* **analyze:** optional food description context and halal dietary guidelines ([#3](https://github.com/Fadhilamadan/nutrio/issues/3)) ([985767c](https://github.com/Fadhilamadan/nutrio/commit/985767c09571f27ecdb70c23b45264acd06d7a52))
+* **api:** fall back to default token when no apiKey ([181fa46](https://github.com/Fadhilamadan/nutrio/commit/181fa46dc34c395e9731c969e90f03031445865a))
+* **app:** integrate free trial across all screens ([f78d44a](https://github.com/Fadhilamadan/nutrio/commit/f78d44a823c0c93f30e65092577b8c53edffc65e))
+* **hook:** add useDefaultUsage for free trial tracking ([c131f89](https://github.com/Fadhilamadan/nutrio/commit/c131f8986fe487212d1c2636bed6cc31caa1d1ab))
+* initial app ([13b3741](https://github.com/Fadhilamadan/nutrio/commit/13b374114613ee39c2f9f0244bfb496b10bd2d2f))
+* **lib:** make apiKey optional for default token support ([e987f52](https://github.com/Fadhilamadan/nutrio/commit/e987f529a53a0b686e91f3f1f45d266ef96137cd))
+* **ui:** add DefaultTokenBanner component ([868bdde](https://github.com/Fadhilamadan/nutrio/commit/868bdde95608564b81984309d62fd258ff0734ea))
+
+
+### Bug Fixes
+
+* animation, accessibility, and cleanup improvements ([#4](https://github.com/Fadhilamadan/nutrio/issues/4)) ([69058b4](https://github.com/Fadhilamadan/nutrio/commit/69058b4df911a9fb87df2449604c8d765ec36bea))
+* **footer:** remove surface-soft bg to avoid box in dark mode ([bff0540](https://github.com/Fadhilamadan/nutrio/commit/bff0540d40f7b24a2157723c8f4df4ce9c92d31e)), closes [#22211](https://github.com/Fadhilamadan/nutrio/issues/22211) [#10100](https://github.com/Fadhilamadan/nutrio/issues/10100)
+* **free-trial:** persist usage counter across logouts, add console.warn ([994fd1c](https://github.com/Fadhilamadan/nutrio/commit/994fd1cf1a5e564ed493376bf16b8255b18769b6))
+* persist analyze screen in sessionStorage across page reload ([8fbbc0a](https://github.com/Fadhilamadan/nutrio/commit/8fbbc0adf521053f18a240f3a964048ad22b8f5f))
+* **settings:** stop save errors from triggering global ErrorCard ([0261c97](https://github.com/Fadhilamadan/nutrio/commit/0261c97fbc981a2f6b21a3df84d0d0b4ab572547))
+
 ## 1.4.0 (2026-06-18)
 
 

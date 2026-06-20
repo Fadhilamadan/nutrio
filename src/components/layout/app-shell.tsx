@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Toaster } from "sonner";
 
@@ -75,10 +75,31 @@ export function AppShell() {
     removeHistoryMeal,
   } = useHistoryMeals(activeUser);
   const { targets, targetsError, saveTargets } = useTargets(activeUser);
-  const { settings, settingsError, isLoadingSettings, installPrompt, defaultModels, saveSettings, installPwa } =
-    useSettings(activeUser);
+  const {
+    settings,
+    settingsError,
+    isLoadingSettings,
+    installPrompt,
+    defaultModels,
+    defaultUsage,
+    isUsingDefaultToken,
+    decrementDefaultUsage,
+    saveSettings,
+    installPwa,
+  } = useSettings(activeUser);
 
-  const [screen, setScreen] = useState<Screen>("dashboard");
+  const [screen, setScreen] = useState<Screen>(() => {
+    if (typeof window === "undefined") return "dashboard";
+    return (sessionStorage.getItem("nutrio_screen") as Screen) || "dashboard";
+  });
+
+  useEffect(() => {
+    if (screen === "analyze") {
+      sessionStorage.setItem("nutrio_screen", "analyze");
+    } else {
+      sessionStorage.removeItem("nutrio_screen");
+    }
+  }, [screen]);
 
   if (status === "loading") {
     return (
@@ -179,7 +200,10 @@ export function AppShell() {
                         user={activeUser}
                         meals={todayMeals}
                         targets={targets}
+                        defaultUsage={defaultUsage}
+                        isUsingDefaultToken={isUsingDefaultToken}
                         onConfigureTargets={() => setScreen("targets")}
+                        onGoToSettings={() => setScreen("settings")}
                       />
                     </ErrorBoundary>
                   </Suspense>
@@ -190,8 +214,11 @@ export function AppShell() {
                       <AnalyzeFoodScreen
                         user={activeUser}
                         settings={settings}
+                        defaultUsage={defaultUsage}
+                        isUsingDefaultToken={isUsingDefaultToken}
                         onSaveMeal={addMeal}
                         onNavigateToSettings={() => setScreen("settings")}
+                        onDecrementDefaultUsage={decrementDefaultUsage}
                       />
                     </ErrorBoundary>
                   </Suspense>
@@ -227,6 +254,8 @@ export function AppShell() {
                         settings={settings}
                         defaultModels={defaultModels}
                         canInstallPwa={Boolean(installPrompt)}
+                        isUsingDefaultToken={isUsingDefaultToken}
+                        defaultUsageRemaining={defaultUsage?.remaining}
                         onInstallPwa={installPwa}
                         onSave={saveSettings}
                       />
