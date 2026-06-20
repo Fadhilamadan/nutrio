@@ -85,7 +85,6 @@ export function useSettings(activeUser: User | null) {
       setSettingsError("");
       setSettings({ ...savedSettings, apiKey: nextSettings.apiKey });
     } catch (error) {
-      setSettingsError(error instanceof Error ? error.message : "Failed to save settings.");
       throw error;
     }
   }

@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { FormError } from "@/components/ui/form-error";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -177,7 +178,7 @@ export function HistoryEditForm({ meal, onSave, onCancel }: HistoryEditFormProps
           onChange={(event) => setDraft((prev) => ({ ...prev, notes: event.target.value }))}
         />
       </div>
-      {error ? <p className="text-sm text-[var(--danger)]">{error}</p> : null}
+      <FormError message={error} />
       <div className="flex gap-2">
         <Button type="button" onClick={saveEditingMeal} disabled={isSaving || !isDirty}>
           {isSaving ? "Saving edit" : "Save edit"}

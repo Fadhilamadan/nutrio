@@ -5,6 +5,7 @@ import { CheckCircle, ChevronDown, ExternalLink, Palette, Smartphone, Sparkles }
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { FormError } from "@/components/ui/form-error";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -352,7 +353,7 @@ export function SettingsForm({ settings, defaultModels, canInstallPwa, onInstall
         </CollapsibleGroup>
       </div>
 
-      {saveError ? <p className="text-sm text-[var(--danger)]">{saveError}</p> : null}
+      <FormError message={saveError} />
       <Button
         type="button"
         className="w-full active:scale-[0.98] transition-transform duration-75"
