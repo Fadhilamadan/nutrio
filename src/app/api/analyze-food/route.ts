@@ -1,8 +1,9 @@
+import type { AiProviderName } from "@/lib/ai";
 import { getProvider } from "@/lib/ai";
 import { AuthRequiredError, requireAuthenticatedUser } from "@/lib/auth";
 import { parseAnalyzeRequest, ValidationError } from "@/lib/validation";
 
-function normalizeError(error: unknown): Error {
+function normalizeError(error: unknown, usedDefaultToken: boolean): Error {
   if (!(error instanceof Error)) return new Error("Failed to analyze food.");
 
   const msg = error.message.toLowerCase();
@@ -19,19 +20,35 @@ function normalizeError(error: unknown): Error {
     msg.includes("authentication");
 
   if (isAuthError) {
-    return new Error("Invalid API key. Check your key in Settings.");
+    return new Error(
+      usedDefaultToken
+        ? "Free trial temporarily unavailable. Try again later or set up your own API key in Settings."
+        : "Invalid API key. Check your key in Settings.",
+    );
   }
 
   return error;
 }
 
 export async function POST(request: Request) {
+  let usedDefaultToken = false;
+
   try {
     await requireAuthenticatedUser();
     const body = parseAnalyzeRequest(await request.json());
 
-    const provider = getProvider(body.provider);
-    const result = await provider.analyzeImage(body.imageBase64, body.apiKey, body.model, body.foodDescription);
+    let { apiKey, provider, model } = body;
+
+    usedDefaultToken = !apiKey;
+
+    if (!apiKey) {
+      apiKey = process.env.DEFAULT_AI_API_KEY ?? "";
+      provider = (process.env.DEFAULT_AI_PROVIDER as AiProviderName) ?? "Groq";
+      model = process.env.GROQ_DEFAULT_MODEL ?? "";
+    }
+
+    const providerInstance = getProvider(provider);
+    const result = await providerInstance.analyzeImage(body.imageBase64, apiKey, model, body.foodDescription);
 
     return Response.json(result);
   } catch (error) {
@@ -45,7 +62,7 @@ export async function POST(request: Request) {
       return Response.json({ error: error.message }, { status: error.status });
     }
 
-    const normalized = normalizeError(error);
+    const normalized = normalizeError(error, usedDefaultToken);
 
     return Response.json({ error: normalized.message }, { status: error instanceof SyntaxError ? 400 : 500 });
   }
