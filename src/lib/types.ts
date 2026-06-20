@@ -51,3 +51,8 @@ export type Settings = {
 };
 
 export type MacroSummary = Pick<Meal, "calories" | "protein" | "carbs" | "fat">;
+
+export type DefaultUsage = {
+  remaining: number;
+  limit: number;
+};

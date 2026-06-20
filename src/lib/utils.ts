@@ -16,7 +16,7 @@ export function percentage(current: number, target: number) {
 export function clearNutrioApiKeys() {
   for (let i = 0; i < window.localStorage.length; i++) {
     const key = window.localStorage.key(i);
-    if (key?.startsWith("nutrio-api-key:")) {
+    if (key?.startsWith("nutrio-api-key:") || key?.startsWith("nutrio-default-usage:")) {
       window.localStorage.removeItem(key);
     }
   }

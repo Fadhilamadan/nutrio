@@ -34,7 +34,7 @@ export const targetsSchema = z.object({
 export const settingsSchema = z.object({
   aiProvider: z.enum(["Gemini", "Groq", "OpenRouter", "HuggingFace", "Mistral"]),
   aiModel: z.string().min(1).max(160),
-  apiKey: z.string().min(1).max(400),
+  apiKey: z.string().max(400),
   notifications: z.boolean(),
   pwaInstalled: z.boolean(),
   theme: z.enum(["System", "Light", "Dark"]),
