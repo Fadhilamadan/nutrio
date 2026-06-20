@@ -3,34 +3,29 @@
 import { useRef, useState, useTransition } from "react";
 import imageCompression from "browser-image-compression";
 import { motion } from "framer-motion";
-import { ChevronDown, ChevronRight, KeyRound, LoaderCircle, Save, Settings as SettingsIcon } from "lucide-react";
+import { ChevronDown, ChevronRight, LoaderCircle, Save } from "lucide-react";
 import { toast } from "sonner";
 
 import { LoadingCard } from "@/components/shared/loading-card";
 import { Button } from "@/components/ui/button";
+import { DefaultTokenBanner } from "@/components/ui/default-token-banner";
 import { Textarea } from "@/components/ui/textarea";
 import {
   AIAnalysisResultEditor,
   type AIAnalysisResultEditorHandle,
 } from "@/features/analyze/components/ai-analysis-result-editor";
 import { ImageUploader } from "@/features/analyze/components/image-uploader";
-import { AI_PROVIDER_LABELS } from "@/lib/ai";
 import { analyzeFoodImage, createMealFromAnalysis } from "@/lib/api";
-import type { AnalysisResult, Meal, Settings, User } from "@/lib/types";
-
-const PROVIDER_KEY_URLS: Record<string, string> = {
-  Gemini: "https://aistudio.google.com/apikey",
-  Groq: "https://console.groq.com/keys",
-  OpenRouter: "https://openrouter.ai/keys",
-  HuggingFace: "https://huggingface.co/settings/tokens",
-  Mistral: "https://console.mistral.ai/api-keys",
-};
+import type { AnalysisResult, DefaultUsage, Meal, Settings, User } from "@/lib/types";
 
 type AnalyzeFoodScreenProps = {
   user: User;
   settings: Settings;
+  defaultUsage: DefaultUsage | null;
+  isUsingDefaultToken: boolean;
   onSaveMeal: (meal: Omit<Meal, "id" | "time">) => Promise<void> | void;
   onNavigateToSettings: () => void;
+  onDecrementDefaultUsage: () => void;
 };
 
 function fileToDataUrl(file: File) {
@@ -42,7 +37,15 @@ function fileToDataUrl(file: File) {
   });
 }
 
-export function AnalyzeFoodScreen({ user, settings, onSaveMeal, onNavigateToSettings }: AnalyzeFoodScreenProps) {
+export function AnalyzeFoodScreen({
+  user,
+  settings,
+  defaultUsage,
+  isUsingDefaultToken,
+  onSaveMeal,
+  onNavigateToSettings,
+  onDecrementDefaultUsage,
+}: AnalyzeFoodScreenProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageName, setImageName] = useState("");
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -78,11 +81,14 @@ export function AnalyzeFoodScreen({ user, settings, onSaveMeal, onNavigateToSett
           imageBase64,
           provider: settings.aiProvider,
           model: settings.aiModel,
-          apiKey: settings.apiKey,
+          apiKey: isUsingDefaultToken ? undefined : settings.apiKey,
           foodDescription: foodDescription || undefined,
         });
         setResult(analysis);
         setOriginalResult(analysis);
+        if (isUsingDefaultToken) {
+          onDecrementDefaultUsage();
+        }
         toast.success("Analysis complete");
       } catch (error) {
         const msg = error instanceof Error ? error.message : "Failed to analyze image.";
@@ -117,38 +123,17 @@ export function AnalyzeFoodScreen({ user, settings, onSaveMeal, onNavigateToSett
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -18 }}
     >
-      {!settings.apiKey ? (
-        <div className="surface-card rounded-xl p-5">
-          <div className="flex gap-4">
-            <div className="mt-0.5 grid size-10 shrink-0 place-items-center rounded-xl bg-[color-mix(in_srgb,var(--primary)_10%,var(--surface))] text-[var(--primary)]">
-              <KeyRound className="size-5" />
-            </div>
-            <div className="min-w-0">
-              <h3 className="text-base font-bold tracking-[-0.0125em] text-[var(--ink)]">Start analyzing food</h3>
-              <p className="mt-1 text-sm leading-6 text-[var(--ink-muted)]">
-                Connect an AI provider in Settings to analyze your meals. Your API key stays in your browser, never on
-                our servers.
-              </p>
-              <Button variant="secondary" size="sm" className="mt-3" onClick={onNavigateToSettings}>
-                <SettingsIcon className="size-4" />
-                Go to Settings
-              </Button>
-              <p className="mt-3 text-xs text-[var(--ink-muted)]">
-                Need help finding an API key?{" "}
-                <a
-                  href={PROVIDER_KEY_URLS[settings.aiProvider]}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[var(--primary)] underline underline-offset-2 hover:no-underline"
-                >
-                  Get a {AI_PROVIDER_LABELS[settings.aiProvider]} key
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
+      {!settings.apiKey && defaultUsage && defaultUsage.remaining <= 0 ? (
+        <DefaultTokenBanner remaining={0} limit={defaultUsage.limit} onGoToSettings={onNavigateToSettings} />
       ) : (
         <>
+          {isUsingDefaultToken && defaultUsage ? (
+            <DefaultTokenBanner
+              remaining={defaultUsage.remaining}
+              limit={defaultUsage.limit}
+              onGoToSettings={onNavigateToSettings}
+            />
+          ) : null}
           <ImageUploader imageName={imageName} onSelectImage={selectImage} />
           {imageFile ? (
             <div className="surface-card rounded-xl p-4">
@@ -181,7 +166,11 @@ export function AnalyzeFoodScreen({ user, settings, onSaveMeal, onNavigateToSett
           {isPending ? (
             <LoadingCard
               title="Estimating nutrition"
-              message={`${settings.aiProvider} is reading the image and returning editable macro metadata.`}
+              message={
+                isUsingDefaultToken
+                  ? "Analyzing your meal with the free trial..."
+                  : `${settings.aiProvider} is reading the image and returning editable macro metadata.`
+              }
               rows={4}
             />
           ) : null}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { useDefaultUsage } from "@/hooks/use-default-usage";
 import type { AiProviderName } from "@/lib/ai";
 import { getDefaultModels, getSettings, saveSettings as saveSettingsApi } from "@/lib/api";
 import type { Settings, User } from "@/lib/types";
@@ -21,6 +22,10 @@ export function useSettings(activeUser: User | null) {
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [defaultModels, setDefaultModels] = useState<Record<AiProviderName, string> | null>(null);
+
+  const { usage: defaultUsage, decrementUsage: decrementDefaultUsage } = useDefaultUsage(activeUser?.id ?? null);
+
+  const isUsingDefaultToken = Boolean(settings && !settings.apiKey && defaultUsage && defaultUsage.remaining > 0);
 
   useEffect(() => {
     if (!activeUser) return;
@@ -73,6 +78,7 @@ export function useSettings(activeUser: User | null) {
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     return () => window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
   }, []);
+
   async function saveSettings(nextSettings: Settings) {
     if (!activeUser) return;
     try {
@@ -103,6 +109,9 @@ export function useSettings(activeUser: User | null) {
     isLoadingSettings,
     installPrompt,
     defaultModels,
+    defaultUsage,
+    isUsingDefaultToken,
+    decrementDefaultUsage,
     saveSettings,
     installPwa,
   };

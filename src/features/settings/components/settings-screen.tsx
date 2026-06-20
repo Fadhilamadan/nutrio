@@ -10,11 +10,21 @@ type SettingsScreenProps = {
   settings: Settings;
   defaultModels: Record<AiProviderName, string> | null;
   canInstallPwa: boolean;
+  isUsingDefaultToken?: boolean;
+  defaultUsageRemaining?: number;
   onInstallPwa: () => void;
   onSave: (settings: Settings) => Promise<void> | void;
 };
 
-export function SettingsScreen({ settings, defaultModels, canInstallPwa, onInstallPwa, onSave }: SettingsScreenProps) {
+export function SettingsScreen({
+  settings,
+  defaultModels,
+  canInstallPwa,
+  isUsingDefaultToken,
+  defaultUsageRemaining,
+  onInstallPwa,
+  onSave,
+}: SettingsScreenProps) {
   const formKey = `${settings.aiModel}:${settings.pwaInstalled}:${settings.theme}`;
 
   return (
@@ -29,6 +39,8 @@ export function SettingsScreen({ settings, defaultModels, canInstallPwa, onInsta
         settings={settings}
         defaultModels={defaultModels}
         canInstallPwa={canInstallPwa}
+        isUsingDefaultToken={isUsingDefaultToken}
+        defaultUsageRemaining={defaultUsageRemaining}
         onInstallPwa={onInstallPwa}
         onSave={onSave}
       />

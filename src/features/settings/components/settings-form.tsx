@@ -18,6 +18,8 @@ type SettingsFormProps = {
   settings: Settings;
   defaultModels: Record<AiProviderName, string> | null;
   canInstallPwa: boolean;
+  isUsingDefaultToken?: boolean;
+  defaultUsageRemaining?: number;
   onInstallPwa: () => void;
   onSave: (settings: Settings) => Promise<void> | void;
 };
@@ -126,7 +128,15 @@ function CollapsibleGroup({
   );
 }
 
-export function SettingsForm({ settings, defaultModels, canInstallPwa, onInstallPwa, onSave }: SettingsFormProps) {
+export function SettingsForm({
+  settings,
+  defaultModels,
+  canInstallPwa,
+  isUsingDefaultToken,
+  defaultUsageRemaining,
+  onInstallPwa,
+  onSave,
+}: SettingsFormProps) {
   const [draftSettings, setDraftSettings] = useState(settings);
   const [saveError, setSaveError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -192,6 +202,15 @@ export function SettingsForm({ settings, defaultModels, canInstallPwa, onInstall
           Configure your AI provider, theme, notifications, and app preferences. Your API key stays in your browser — we
           never upload it.
         </p>
+        {isUsingDefaultToken ? (
+          <p className="mt-3 rounded-lg bg-[color-mix(in_srgb,var(--warning)_10%,var(--surface))] px-3 py-2 text-xs leading-5 text-[var(--ink-muted)]">
+            You&apos;re using the free trial —{" "}
+            <span className="font-semibold text-[var(--ink)]">
+              {defaultUsageRemaining ?? 0} snapshot{(defaultUsageRemaining ?? 0) !== 1 ? "s" : ""} remaining
+            </span>
+            . Add your own API key below for unlimited analysis.
+          </p>
+        ) : null}
       </div>
 
       <div className="space-y-4">

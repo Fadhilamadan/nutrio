@@ -75,8 +75,18 @@ export function AppShell() {
     removeHistoryMeal,
   } = useHistoryMeals(activeUser);
   const { targets, targetsError, saveTargets } = useTargets(activeUser);
-  const { settings, settingsError, isLoadingSettings, installPrompt, defaultModels, saveSettings, installPwa } =
-    useSettings(activeUser);
+  const {
+    settings,
+    settingsError,
+    isLoadingSettings,
+    installPrompt,
+    defaultModels,
+    defaultUsage,
+    isUsingDefaultToken,
+    decrementDefaultUsage,
+    saveSettings,
+    installPwa,
+  } = useSettings(activeUser);
 
   const [screen, setScreen] = useState<Screen>("dashboard");
 
@@ -179,7 +189,10 @@ export function AppShell() {
                         user={activeUser}
                         meals={todayMeals}
                         targets={targets}
+                        defaultUsage={defaultUsage}
+                        isUsingDefaultToken={isUsingDefaultToken}
                         onConfigureTargets={() => setScreen("targets")}
+                        onGoToSettings={() => setScreen("settings")}
                       />
                     </ErrorBoundary>
                   </Suspense>
@@ -190,8 +203,11 @@ export function AppShell() {
                       <AnalyzeFoodScreen
                         user={activeUser}
                         settings={settings}
+                        defaultUsage={defaultUsage}
+                        isUsingDefaultToken={isUsingDefaultToken}
                         onSaveMeal={addMeal}
                         onNavigateToSettings={() => setScreen("settings")}
+                        onDecrementDefaultUsage={decrementDefaultUsage}
                       />
                     </ErrorBoundary>
                   </Suspense>
@@ -227,6 +243,8 @@ export function AppShell() {
                         settings={settings}
                         defaultModels={defaultModels}
                         canInstallPwa={Boolean(installPrompt)}
+                        isUsingDefaultToken={isUsingDefaultToken}
+                        defaultUsageRemaining={defaultUsage?.remaining}
                         onInstallPwa={installPwa}
                         onSave={saveSettings}
                       />
