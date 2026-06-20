@@ -15,7 +15,7 @@ function readUsage(userId: string): DefaultUsage | null {
     const raw = window.localStorage.getItem(defaultUsageKey(userId));
     if (raw) return JSON.parse(raw) as DefaultUsage;
   } catch {
-    /* localStorage unavailable */
+    console.warn("localStorage unavailable (private browsing / quota exceeded)");
   }
   return null;
 }
@@ -24,7 +24,7 @@ function writeUsage(userId: string, usage: DefaultUsage) {
   try {
     window.localStorage.setItem(defaultUsageKey(userId), JSON.stringify(usage));
   } catch {
-    /* localStorage unavailable */
+    console.warn("localStorage unavailable (private browsing / quota exceeded)");
   }
 }
 
@@ -56,13 +56,10 @@ function emitUsageChange() {
 export function useDefaultUsage(userId: string | null) {
   const subscribe = useCallback((callback: () => void) => {
     window.addEventListener("nutrio-usage-change", callback);
-    window.addEventListener("storage", callback);
     return () => {
       window.removeEventListener("nutrio-usage-change", callback);
-      window.removeEventListener("storage", callback);
     };
   }, []);
-
   const getSnapshot = useCallback((): DefaultUsage | null => {
     if (!userId) return null;
 
@@ -80,7 +77,7 @@ export function useDefaultUsage(userId: string | null) {
 
   const decrementUsage = useCallback(() => {
     if (!userId) return;
-    const current = getCached(userId) ?? readUsage(userId);
+    const current = getCached(userId);
     if (!current) return;
     const next = { ...current, remaining: Math.max(0, current.remaining - 1) };
     writeUsage(userId, next);
@@ -93,7 +90,7 @@ export function useDefaultUsage(userId: string | null) {
     try {
       window.localStorage.removeItem(defaultUsageKey(userId));
     } catch {
-      /* localStorage unavailable */
+      console.warn("localStorage unavailable (private browsing / quota exceeded)");
     }
     deleteCached(userId);
     emitUsageChange();
